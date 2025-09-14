@@ -27,7 +27,6 @@ To those to come, who are doubtful or critical of their own abilities, I'd like 
 <img width="626" height="216" alt="Screenshot 2025-09-14 at 8 50 20 AM" src="https://github.com/user-attachments/assets/e11567fd-3510-4e77-a84a-5ace4643178e" />
 
 To those to come, who are struggling, "Nobody does anything without help.” - [Uncle Phil, The Fresh Prince of Bel Air](https://www.youtube.com/watch?v=RwQ3x2rpm_o&ab_channel=Rendell%2CLikeDenzel)
-**Find help**
 
 In summary, help others, ask for help, and work like hell.
 
