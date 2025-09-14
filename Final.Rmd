@@ -1,0 +1,2156 @@
+---
+title: "MASDS Thesis Data and Methedology"
+subtitle: "RDD applied to LAUSD"
+author: "Devin Reeh"
+date: "2025-07-10"
+output:
+  html_document: default
+  pdf_document:
+    latex_engine: lualatex
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, echo=FALSE, results='hide', warning=FALSE, include=FALSE}
+
+getwd()
+setwd("~/personal-projects/ucla-masds-thesis/")
+
+# ──────────────────────────────────────────────────────────────
+#Load packages for gausian processes, then data manipulation
+# ──────────────────────────────────────────────────────────────
+devtools::install_github('doeun-kim/gpss')
+# install.packages(c("readxl", "dplyr", "devtools", "broom", "readr"))
+library(gpss)
+library(readxl)
+library(readr)
+library(stringr)
+library(ggplot2)
+library(tidyverse)
+library(dplyr)
+library(broom)
+library(readr)
+library(rdrobust)
+```
+
+# Data Sources and Variables
+
+## Summary
+* CALPADS UPC Source File (TK/K–12) 2021-2022
+    * https://www.cde.ca.gov/ds/ad/filescupc.asp
+    * https://www.cde.ca.gov/fg/aa/lc/lcffoverview.asp
+```{r, echo=FALSE, results='hide', warning=FALSE, include=FALSE}
+cupc_path <- "~/personal-projects/ucla-masds-thesis/data/cupc2122-k12.xlsx"
+upc_data <- read_excel(cupc_path, sheet="School-Level CALPADS UPC Data", col_names = T, skip = 1)
+colnames(upc_data) <- c(
+  "academic_year",
+  "county_code",
+  "district_code",
+  "school_code",
+  "county_name",
+  "district_name",
+  "school_name",
+  "district_type",
+  "school_type",
+  "educational_option_type",
+  "nslp_provision_status",
+  "charter_school_yn",
+  "charter_number",
+  "charter_funding_type",
+  "irc",
+  "low_grade",
+  "high_grade",
+  "total_enrollment",
+  "frpm_program",
+  "foster",
+  "tribal_foster_youth",
+  "homeless",
+  "migrant_program",
+  "direct_certification",
+  "undup_frpm_eligible_count",
+  "english_learner",
+  "calpads_upc",
+  "calpads_certified_yn"
+)
+
+lausd_cupc <- upc_data %>%
+  filter(
+    academic_year == "2021-2022",
+    district_code == "64733"     # LAUSD county-district prefix
+  ) %>%
+  mutate(
+    undup_pct = 100 * (as.numeric(calpads_upc) / as.numeric(total_enrollment))
+  ) %>%
+    select(
+      school_code,
+      undup_pct
+    )
+```
+
+* Chronic Absenteeism Data 2022-2023
+    * https://www.cde.ca.gov/ds/ad/filesabd.asp
+```{r, echo=FALSE, results='hide', warning=FALSE, include=FALSE}
+# ──────────────────────────────────────────────────────────────
+# Chronic Absenteeism TXT  →  attendance_lausd
+# ──────────────────────────────────────────────────────────────
+att_path <- "~/Downloads/chronicabsenteeism22-v3.txt"
+
+att_raw <- read.delim(att_path, sep = "\t", quote = "\"", stringsAsFactors = FALSE)
+
+# Minimal rename for needed columns
+names(att_raw)[ names(att_raw) == "District.Name"            ] <- "district_name"
+names(att_raw)[ names(att_raw) == "School.Name"              ] <- "school_name"
+names(att_raw)[ names(att_raw) == "School.Code"              ] <- "school_code"
+names(att_raw)[ names(att_raw) == "ChronicAbsenteeismRate"   ] <- "chronic_absenteeism"
+
+
+attendance_lausd <- att_raw %>%
+  filter(district_name == "Los Angeles Unified", Reporting.Category == "TA") %>%
+  mutate(
+    school_code = str_pad(as.character(school_code), width = 7, pad = "0"),
+    chronic_absenteeism  = as.numeric(na_if(chronic_absenteeism, '*')),
+    ChronicAbsenteeismEligibleCumulativeEnrollment = as.numeric(na_if(ChronicAbsenteeismEligibleCumulativeEnrollment, '*')),
+    ChronicAbsenteeismCount = as.numeric(na_if(ChronicAbsenteeismCount, '*')),
+  )
+
+```
+
+* Enrollment by School (2020–2022)
+    * https://www.cde.ca.gov/ds/ad/fileshistenr8122.asp
+```{r, echo=FALSE, results='hide', warning=FALSE, include=FALSE}
+# Download and read the demographic file
+demo_url <- "https://www3.cde.ca.gov/demo-downloads/enrsch/enr202022-v2.txt"
+
+# The file is pipe-delimited with no headers
+demo_raw <- read_delim(demo_url, delim = "\t", col_names = T, show_col_types = FALSE)
+
+# ------------------------------
+# Filter to LAUSD, Primary enrollment only
+# ------------------------------
+
+lausd_demo <- demo_raw %>%
+  filter(
+    ACADEMIC_YEAR == "2021-22",
+    ENR_TYPE == "P",                        # Primary enrollment
+    substr(CDS_CODE, 1, 7) == "1964733"     # LAUSD county-district prefix
+  )
+
+# ------------------------------
+# Total enrollment per school
+# ------------------------------
+
+total_enroll <- lausd_demo %>%
+  group_by(CDS_CODE) %>%
+  summarise(total_enroll = sum(ENR_TOTAL, na.rm = TRUE), .groups = "drop")
+
+# ------------------------------
+# Step 4: Enrollment by ethnicity
+# RACE_ETHNICITY codes:
+# 0 = Not reported
+# 1 = American Indian
+# 2 = Asian
+# 3 = Pacific Islander
+# 4 = Filipino
+# 5 = Hispanic/Latino
+# 6 = Black/African American
+# 7 = White
+# 9 = Two or more races
+# ------------------------------
+
+race_counts <- lausd_demo %>%
+  group_by(CDS_CODE, RACE_ETHNICITY) %>%
+  summarise(race_enroll = sum(ENR_TOTAL, na.rm = TRUE), .groups = "drop") %>%
+  pivot_wider(
+    names_from = RACE_ETHNICITY,
+    values_from = race_enroll,
+    names_prefix = "ethnic_",
+    values_fill = 0
+  )
+
+# ------------------------------
+# Compute percentages
+# ------------------------------
+
+race_pct <- race_counts %>%
+  left_join(total_enroll, by = "CDS_CODE") %>%
+  mutate(
+    school_code       = substr(CDS_CODE, 8, 14),
+    pct_hispanic      = 100 * ethnic_5 / total_enroll,
+    pct_black         = 100 * ethnic_6 / total_enroll,
+    pct_white         = 100 * ethnic_7 / total_enroll,
+    pct_asian         = 100 * ethnic_2 / total_enroll,
+    pct_two_or_more   = 100 * ethnic_9 / total_enroll,
+    pct_other         = 100 * (ethnic_0 + ethnic_1 + ethnic_3 + ethnic_4) / total_enroll
+  ) %>%
+  select(
+    school_code,
+    total_enroll,
+    pct_hispanic,
+    pct_black,
+    pct_white,
+    pct_asian,
+    pct_two_or_more,
+    pct_other
+  )
+
+
+```
+    
+
+* Free or Reduced-Price Meal (Student Poverty) Data
+    * https://www.cde.ca.gov/ds/ad/filessp.asp
+```{r, echo=FALSE, results='hide', warning=FALSE, include=FALSE}
+# ──────────────────────────────────────────────────────────────
+# FRPM 2021-22  →  frpm_lausd (clean names)
+# ──────────────────────────────────────────────────────────────
+frpm_path <- "~/Downloads/frpm2122_v2.xlsx"
+
+# If the FRPM sheet name is uncertain, take the 2nd sheet (adjust if needed)
+frpm_raw <- read_excel(frpm_path, sheet = 2, skip = 1)
+
+# Explicit column rename vector  (index order must match colnames(frpm_raw))
+names(frpm_raw) <- c(
+  "academic_year",
+  "county_code",
+  "district_code",
+  "school_code",
+  "county_name",
+  "district_name",
+  "school_name",
+  "district_type",
+  "school_type",
+  "educational_option_type",
+  "nslp_provision_status",
+  "charter_school_yn",
+  "charter_school_number",
+  "charter_funding_type",
+  "irc",
+  "low_grade",
+  "high_grade",
+  "enrollment_k_12",
+  "free_meal_count_k_12",
+  "percent_eligible_free_k_12",
+  "frpm_count_k_12",
+  "percent_eligible_frpm_k_12",
+  "enrollment_5_17",
+  "free_meal_count_5_17",
+  "percent_eligible_free_5_17",
+  "frpm_count_5_17",
+  "frpm_rate",                      # running variable
+  "calpads_cert_status"
+)
+
+frpm_lausd <- frpm_raw %>%
+  filter(district_name == "Los Angeles Unified") %>%
+  select(school_name, school_code, frpm_rate) %>%
+  mutate(
+    school_name = toupper(trimws(school_name)),
+    frpm_rate   = as.numeric(frpm_rate),
+    schoolcode = str_pad(as.character(school_code), width = 7, pad = "0")
+  )
+```
+
+* Beyond the Bell Program Data for Before and After School Programs, 2021-2022
+    * LAUSD open data catalog
+    * https://my.lausd.net/OpenDataCatalog/DocView.aspx?id=3145&dbid=0&repo=OpenDataCatalog&searchid=344a4203-6de0-446f-9b1c-d0f93417830b
+```{r, echo=FALSE, results='hide', warning=FALSE, include=FALSE}
+btb_path <- "~/Downloads/BeyondTheBellSchoolSitePrograms-20212022 copy.csv"
+btb_raw  <- read.csv(btb_path, stringsAsFactors = FALSE)
+
+# Rename the single column we need
+names(btb_raw)[ names(btb_raw) == "School" ] <- "school_name"
+
+
+btb_clean <- btb_raw %>%
+  mutate(
+    btb_am = ifelse(is.na(BeforeSchoolGrantProgram), 0, 1),
+    btb_pm = ifelse(is.na(AfterSchoolGeneralFundedPrograms) | is.na(AfterSchoolGrantProgram), 0, 1),
+    CDSCode = as.character(CDSCode),
+    school_code = str_sub(CDSCode, -7)
+  )
+
+btb_unique <- btb_clean %>%
+  group_by(school_code) %>%
+  summarise(
+    SchoolYear = first(SchoolYear),  # or customize how you want to handle it
+    BeforeSchoolGrantProgram = as.integer(any(!is.na(BeforeSchoolGrantProgram))),
+    AfterSchoolGeneralFundedPrograms = as.integer(any(!is.na(AfterSchoolGeneralFundedPrograms))),
+    btb_participation = ifelse(BeforeSchoolGrantProgram || AfterSchoolGeneralFundedPrograms, 1, 0)
+  )
+```
+
+* CAASPP Test Scores
+```{r}
+caaspp_scores_path <- "data/sb_ca2023_1_csv_v1.txt"
+caaspp <- read_delim(caaspp_scores_path, delim="^")
+colnames(caaspp) <- c(
+  "county_code",
+  "district_code",
+  "school_code",
+  "filler",
+  "test_year",
+  "student_group_id",
+  "test_type",
+  "total_tested_reporting_level",
+  "total_tested_with_scores",
+  "grade",
+  "test_id",
+  "students_enrolled",
+  "students_tested",
+  "mean_scale_score",
+  "pct_standard_exceeded",
+  "pct_standard_met",
+  "pct_standard_met_and_above",
+  "pct_standard_nearly_met",
+  "pct_standard_not_met",
+  "students_with_scores",
+  "area1_pct_above_standard",
+  "area1_pct_near_standard",
+  "area1_pct_below_standard",
+  "area2_pct_above_standard",
+  "area2_pct_near_standard",
+  "area2_pct_below_standard",
+  "area3_pct_above_standard",
+  "area3_pct_near_standard",
+  "area3_pct_below_standard",
+  "area4_pct_above_standard",
+  "area4_pct_near_standard",
+  "area4_pct_below_standard",
+  "type_id"
+)
+
+lausd_caaspp <- caaspp %>%
+    filter(district_code=="64733") %>%
+    inner_join(frpm_lausd, by="school_code") %>%
+  filter(student_group_id == 1) %>%  # All Students only
+  mutate(
+    test_subject = case_when(
+      test_id == 1 ~ "ELA",
+      test_id == 2 ~ "Math",
+      TRUE ~ NA_character_
+    )
+  ) %>%
+  filter(!is.na(test_subject))  # Keep only ELA and Math
+
+# 2. Convert test scores to numeric (some may be "*")
+lausd_caaspp_numeric <- lausd_caaspp %>%
+  mutate(across(
+    c(mean_scale_score,
+      pct_standard_met_and_above,
+      pct_standard_not_met),
+    ~ as.numeric(na_if(., "*"))
+  ))
+
+# 3. Aggregate to school-subject-year level
+school_scores <- lausd_caaspp_numeric %>%
+  group_by(school_code, test_year, test_subject) %>%
+  summarise(
+    avg_pct_met_above = mean(pct_standard_met_and_above, na.rm = TRUE),
+    avg_pct_not_met   = mean(pct_standard_not_met, na.rm = TRUE),
+    avg_scale_score   = mean(mean_scale_score, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  pivot_wider(
+    names_from = test_subject,
+    values_from = c(avg_pct_met_above, avg_pct_not_met, avg_scale_score),
+    names_glue = "{.value}_{test_subject}"
+  )
+
+
+glimpse(school_scores)
+```
+
+* Final Data Set is merged on school code
+```{r, echo=FALSE, warning=FALSE, include=FALSE}
+
+merged <- inner_join(frpm_lausd, attendance_lausd, by = "school_code") %>%
+  mutate(
+    treated = ifelse(frpm_rate >= 0.75, 1, 0),
+    running = frpm_rate - 0.75
+  ) %>%
+  left_join(race_pct, by = "school_code") %>%
+  left_join(lausd_cupc, by="school_code") %>%
+  left_join(school_scores, by="school_code") %>%
+  left_join(btb_unique, by = "school_code")
+
+df_clean <- merged %>%
+  filter(!is.na(chronic_absenteeism)) %>%  # remove rows with missing outcome
+  mutate(
+    frpm_percent = frpm_rate * 100,
+    food_eligible = if_else(frpm_percent >= 60, 1, 0),  # CEP cutoff
+    btb = if_else(is.na(btb_participation), 0L, as.integer(btb_participation > 0)),
+    county = as.factor(County.Code),
+    district = as.factor(District.Code)
+  )
+
+glimpse(df_clean)
+```
+
+
+
+
+
+
+
+# All RDD Plots
+
+```{r classical-rdd-results-and-plots, echo=FALSE, warning=FALSE, fig.width=6, fig.height=4, results='asis'}
+library(rdrobust)
+library(dplyr)
+library(tibble)
+
+# Define helper to run RDD and get plot
+run_rdd <- function(df, outcome, running, cutoff) {
+  df <- df %>% filter(!is.na(.data[[outcome]]), !is.na(.data[[running]]))
+  result <- rdrobust(df[[outcome]], df[[running]], c = cutoff)
+  plot <- rdplot(df[[outcome]], df[[running]], c = cutoff,
+                 x.label = running, y.label = outcome,
+                 title = paste(outcome, "~", running, "cutoff", cutoff))
+  list(model = result, plot = plot)
+}
+
+# Define outcomes and cutoffs
+outcomes <- c(
+  "chronic_absenteeism",
+  "btb",
+  "avg_pct_met_above_ELA",
+  "avg_pct_met_above_Math",
+  "avg_pct_not_met_ELA",
+  "avg_pct_not_met_Math",
+  "avg_scale_score_ELA",
+  "avg_scale_score_Math"
+)
+
+running_vars <- list(
+  frpm_percent = c(35, 75),
+  undup_pct = c(55, 75)
+)
+
+# Run and store results
+results <- list()
+summary_rows <- list()
+
+for (rv in names(running_vars)) {
+  for (cut in running_vars[[rv]]) {
+    for (outcome in outcomes) {
+      label <- paste(outcome, "~", rv, "@", cut)
+      res <- run_rdd(df_clean, outcome, rv, cut)
+      results[[label]] <- res
+
+      # Extract estimates
+      coef <- res$model$coef[1, 1]
+      se   <- res$model$se[1, 1]
+      ci   <- res$model$ci[1, ]
+      pval <- res$model$pv[1, 1]
+
+      # Store for summary
+      summary_rows[[label]] <- tibble(
+        outcome = outcome,
+        running_variable = rv,
+        cutoff = cut,
+        tau = coef,
+        se = se,
+        ci_lower = ci[1],
+        ci_upper = ci[2],
+        p_value = pval
+      )
+
+      # Print section header
+      cat("##", label, "\n\n")
+      cat(sprintf(
+        "**Estimate (tau):** %.3f  \n**SE:** %.3f  \n**95%% CI:** [%.3f, %.3f]  \n**p-value:** %.3f\n\n",
+        coef, se, ci[1], ci[2], pval
+      ))
+
+      # Force plot to render
+      print(res$plot)
+    }
+  }
+}
+
+# Combine summary tibble
+classical_rdd_summary_tbl <- bind_rows(summary_rows)
+
+# Print or return the summary table
+print(classical_rdd_summary_tbl, n=100)
+
+```
+
+
+# GP RDD - chronic_abseentism ~ FRPM % - 35 cut off
+```{r}
+######################################################
+# GP RDD
+# chronic_abseentism ~ FRPM % - 35 cut off
+######################################################
+rdd_res_absenteeism_frpm_35_cutoff <- gp_rdd(
+  df_clean$frpm_percent,
+  df_clean$chronic_absenteeism,
+  35
+)
+rdd_res_absenteeism_frpm_35_cutoff$tau     # estimated effect
+rdd_res_absenteeism_frpm_35_cutoff$se      # standard error
+rdd_res_absenteeism_frpm_35_cutoff$ci      # confidence interval
+rdd_result_plot_1 <- gp_rdd_plot(rdd_res_absenteeism_frpm_35_cutoff) +
+  geom_vline(xintercept = 35, linetype = "dashed") +
+  coord_cartesian(xlim = c(20, 60)) +
+  labs(title = "Zoomed-In View Around the Cutoff")
+print(rdd_result_plot_1)
+
+```
+
+# GP RDD - chronic_abseentism ~ FRPM % - 75 cut off
+```{r}
+######################################################
+# GP RDD
+# chronic_abseentism ~ FRPM % - 75 cut off
+######################################################
+# Example using formula interface:
+rdd_res_absenteeism_frpm_75_cutoff <- gp_rdd(
+  df_clean$frpm_percent,
+  df_clean$chronic_absenteeism,
+  75
+)
+rdd_res_absenteeism_frpm_75_cutoff$tau     # estimated effect
+rdd_res_absenteeism_frpm_75_cutoff$se      # standard error
+rdd_res_absenteeism_frpm_75_cutoff$ci      # confidence interval
+rdd_result_plot_2 <- gp_rdd_plot(rdd_res_absenteeism_frpm_75_cutoff) +
+  geom_vline(xintercept = 35, linetype = "dashed") +
+  coord_cartesian(xlim = c(20, 60)) +
+  labs(title = "Zoomed-In View Around the Cutoff")
+print(rdd_result_plot_2)
+```
+
+
+# GP RDD - BTB ~ FRPM % - 35 cut off
+```{r}
+######################################################
+# GP RDD
+# BTB ~ FRPM % - 35 cut off
+######################################################
+rdd_res_absenteeism_BTB_35_cutoff <- gp_rdd(
+  df_clean$frpm_percent,
+  df_clean$btb,
+  35
+)
+rdd_res_absenteeism_BTB_35_cutoff$tau     # estimated effect
+rdd_res_absenteeism_BTB_35_cutoff$se      # standard error
+rdd_res_absenteeism_BTB_35_cutoff$ci      # confidence interval
+rdd_result_plot_3 <- gp_rdd_plot(rdd_res_absenteeism_BTB_35_cutoff) +
+  geom_vline(xintercept = 35, linetype = "dashed") +
+  coord_cartesian(xlim = c(20, 60)) +
+  labs(title = "Zoomed-In View Around the Cutoff")
+print(rdd_result_plot_3)
+
+```
+
+# GP RDD - BTB ~ FRPM % - 75 cut off
+```{r}
+######################################################
+# GP RDD
+# BTB ~ FRPM % - 75 cut off
+######################################################
+rdd_res_absenteeism_BTB_75_cutoff <- gp_rdd(
+  df_clean$frpm_percent,
+  df_clean$btb,
+  75
+)
+rdd_res_absenteeism_BTB_75_cutoff$tau     # estimated effect
+rdd_res_absenteeism_BTB_75_cutoff$se      # standard error
+rdd_res_absenteeism_BTB_75_cutoff$ci      # confidence interval
+rdd_result_plot_4 <- gp_rdd_plot(rdd_res_absenteeism_BTB_75_cutoff) +
+                      geom_vline(xintercept = 75, linetype = "dashed") +
+                      coord_cartesian(xlim = c(20, 60)) +
+                      labs(title = "Zoomed-In View Around the Cutoff")
+print(rdd_result_plot_4)
+```
+
+
+# GP RDD - chronic_abseentism ~ Unduplicated Pupil % - 55% cut off
+```{r}
+rdd_res_absenteeism_undup_55_cutoff <- gp_rdd(
+  df_clean$undup_pct,
+  df_clean$chronic_absenteeism,
+  55
+)
+
+rdd_res_absenteeism_undup_55_cutoff$tau
+rdd_res_absenteeism_undup_55_cutoff$se
+rdd_res_absenteeism_undup_55_cutoff$ci
+
+rdd_plot_undup_55_absent <- gp_rdd_plot(rdd_res_absenteeism_undup_55_cutoff) +
+  geom_vline(xintercept = 55, linetype = "dashed") +
+  coord_cartesian(xlim = c(30, 80)) +
+  labs(title = "Chronic Absenteeism ~ Unduplicated % (55% Cutoff)")
+print(rdd_plot_undup_55_absent)
+
+```
+# GP RDD - chronic_abseentism ~ Unduplicated Pupil % - 75% cut off
+```{r}
+rdd_res_absenteeism_undup_75_cutoff <- gp_rdd(
+  df_clean$undup_pct,
+  df_clean$chronic_absenteeism,
+  75
+)
+
+rdd_res_absenteeism_undup_75_cutoff$tau
+rdd_res_absenteeism_undup_75_cutoff$se
+rdd_res_absenteeism_undup_75_cutoff$ci
+
+rdd_plot_undup_75_absent <- gp_rdd_plot(rdd_res_absenteeism_undup_75_cutoff) +
+  geom_vline(xintercept = 75, linetype = "dashed") +
+  coord_cartesian(xlim = c(50, 95)) +
+  labs(title = "Chronic Absenteeism ~ Unduplicated % (75% Cutoff)")
+print(rdd_plot_undup_75_absent)
+```
+
+# GP RDD - BTB ~ Unduplicated Pupil % - 55% cut off
+```{r}
+rdd_res_btb_undup_55_cutoff <- gp_rdd(
+  df_clean$undup_pct,
+  df_clean$btb,
+  55
+)
+
+rdd_res_btb_undup_55_cutoff$tau
+rdd_res_btb_undup_55_cutoff$se
+rdd_res_btb_undup_55_cutoff$ci
+
+rdd_plot_undup_55_btb <- gp_rdd_plot(rdd_res_btb_undup_55_cutoff) +
+  geom_vline(xintercept = 55, linetype = "dashed") +
+  coord_cartesian(xlim = c(30, 80)) +
+  labs(title = "BTB Participation ~ Unduplicated % (55% Cutoff)")
+print(rdd_plot_undup_55_btb)
+
+```
+
+# GP RDD - BTB ~ Unduplicated Pupil % - 75% cut off
+
+```{r}
+rdd_res_btb_undup_75_cutoff <- gp_rdd(
+  df_clean$undup_pct,
+  df_clean$btb,
+  75
+)
+
+rdd_res_btb_undup_75_cutoff$tau
+rdd_res_btb_undup_75_cutoff$se
+rdd_res_btb_undup_75_cutoff$ci
+
+rdd_plot_undup_75_btb <- gp_rdd_plot(rdd_res_btb_undup_75_cutoff) +
+  geom_vline(xintercept = 75, linetype = "dashed") +
+  coord_cartesian(xlim = c(50, 95)) +
+  labs(title = "BTB Participation ~ Unduplicated % (75% Cutoff)")
+print(rdd_plot_undup_75_btb)
+
+```
+
+# GP RDD - avg_pct_met_above_ELA ~ FRPM % - 35 cutoff
+```{r}
+rdd_avg_pct_met_above_ela_frpm_35 <- gp_rdd(df_clean$frpm_percent, df_clean$avg_pct_met_above_ELA, 35)
+rdd_avg_pct_met_above_ela_frpm_35$tau
+rdd_avg_pct_met_above_ela_frpm_35$se
+rdd_avg_pct_met_above_ela_frpm_35$ci
+
+rdd_plot_avg_pct_met_above_ela_frpm_35 <- gp_rdd_plot(rdd_avg_pct_met_above_ela_frpm_35) +
+  geom_vline(xintercept = 35, linetype = "dashed") +
+  coord_cartesian(xlim = c(20, 60)) +
+  labs(title = "% MetAbove ELA ~ FRPM (35% Cutoff)")
+print(rdd_plot_avg_pct_met_above_ela_frpm_35)
+```
+
+# GP RDD - avg_pct_met_above_ELA ~ FRPM % - 75 cutoff
+```{r}
+rdd_avg_pct_met_above_ela_frpm_75 <- gp_rdd(df_clean$frpm_percent, df_clean$avg_pct_met_above_ELA, 75)
+rdd_avg_pct_met_above_ela_frpm_75$tau
+rdd_avg_pct_met_above_ela_frpm_75$se
+rdd_avg_pct_met_above_ela_frpm_75$ci
+
+rdd_plot_avg_pct_met_above_ela_frpm_75 <- gp_rdd_plot(rdd_avg_pct_met_above_ela_frpm_75) +
+  geom_vline(xintercept = 75, linetype = "dashed") +
+  coord_cartesian(xlim = c(50, 95)) +
+  labs(title = "% MetAbove ELA ~ FRPM (75% Cutoff)")
+print(rdd_plot_avg_pct_met_above_ela_frpm_75)
+```
+
+# GP RDD - avg_pct_met_above_ELA ~ Undup % - 55 cutoff
+```{r}
+rdd_avg_pct_met_above_ela_undup_55 <- gp_rdd(df_clean$undup_pct, df_clean$avg_pct_met_above_ELA, 55)
+rdd_avg_pct_met_above_ela_undup_55$tau
+rdd_avg_pct_met_above_ela_undup_55$se
+rdd_avg_pct_met_above_ela_undup_55$ci
+
+rdd_plot_avg_pct_met_above_ela_undup_55 <- gp_rdd_plot(rdd_avg_pct_met_above_ela_undup_55) +
+  geom_vline(xintercept = 55, linetype = "dashed") +
+  coord_cartesian(xlim = c(30, 80)) +
+  labs(title = "% MetAbove ELA ~ Undup (55% Cutoff)")
+print(rdd_plot_avg_pct_met_above_ela_undup_55)
+```
+
+# GP RDD - avg_pct_met_above_ELA ~ Undup % - 75 cutoff
+```{r}
+rdd_avg_pct_met_above_ela_undup_75 <- gp_rdd(df_clean$undup_pct, df_clean$avg_pct_met_above_ELA, 75)
+rdd_avg_pct_met_above_ela_undup_75$tau
+rdd_avg_pct_met_above_ela_undup_75$se
+rdd_avg_pct_met_above_ela_undup_75$ci
+
+rdd_plot_avg_pct_met_above_ela_undup_75 <- gp_rdd_plot(rdd_avg_pct_met_above_ela_undup_75) +
+  geom_vline(xintercept = 75, linetype = "dashed") +
+  coord_cartesian(xlim = c(50, 95)) +
+  labs(title = "% MetAbove ELA ~ Undup (75% Cutoff)")
+print(rdd_plot_avg_pct_met_above_ela_undup_75)
+```
+
+# GP RDD - avg_pct_met_above_Math ~ FRPM % - 35 cutoff
+```{r}
+rdd_avg_pct_met_above_math_frpm_35 <- gp_rdd(df_clean$frpm_percent, df_clean$avg_pct_met_above_Math, 35)
+rdd_avg_pct_met_above_math_frpm_35$tau
+rdd_avg_pct_met_above_math_frpm_35$se
+rdd_avg_pct_met_above_math_frpm_35$ci
+
+rdd_plot_avg_pct_met_above_math_frpm_35 <- gp_rdd_plot(rdd_avg_pct_met_above_math_frpm_35) +
+  geom_vline(xintercept = 35, linetype = "dashed") +
+  coord_cartesian(xlim = c(20, 60)) +
+  labs(title = "% MetAbove Math ~ FRPM (35% Cutoff)")
+print(rdd_plot_avg_pct_met_above_math_frpm_35)
+```
+
+# GP RDD - avg_pct_met_above_Math ~ FRPM % - 75 cutoff
+```{r}
+rdd_avg_pct_met_above_math_frpm_75 <- gp_rdd(df_clean$frpm_percent, df_clean$avg_pct_met_above_Math, 75)
+rdd_avg_pct_met_above_math_frpm_75$tau
+rdd_avg_pct_met_above_math_frpm_75$se
+rdd_avg_pct_met_above_math_frpm_75$ci
+
+rdd_plot_avg_pct_met_above_math_frpm_75 <- gp_rdd_plot(rdd_avg_pct_met_above_math_frpm_75) +
+  geom_vline(xintercept = 75, linetype = "dashed") +
+  coord_cartesian(xlim = c(50, 95)) +
+  labs(title = "% MetAbove Math ~ FRPM (75% Cutoff)")
+print(rdd_plot_avg_pct_met_above_math_frpm_75)
+```
+
+# GP RDD - avg_pct_met_above_Math ~ Undup % - 55 cutoff
+```{r}
+rdd_avg_pct_met_above_math_undup_55 <- gp_rdd(df_clean$undup_pct, df_clean$avg_pct_met_above_Math, 55)
+rdd_avg_pct_met_above_math_undup_55$tau
+rdd_avg_pct_met_above_math_undup_55$se
+rdd_avg_pct_met_above_math_undup_55$ci
+
+rdd_plot_avg_pct_met_above_math_undup_55 <- gp_rdd_plot(rdd_avg_pct_met_above_math_undup_55) +
+  geom_vline(xintercept = 55, linetype = "dashed") +
+  coord_cartesian(xlim = c(30, 80)) +
+  labs(title = "% MetAbove Math ~ Undup (55% Cutoff)")
+print(rdd_plot_avg_pct_met_above_math_undup_55)
+```
+
+# GP RDD - avg_pct_met_above_Math ~ Undup % - 75 cutoff
+```{r}
+rdd_avg_pct_met_above_math_undup_75 <- gp_rdd(df_clean$undup_pct, df_clean$avg_pct_met_above_Math, 75)
+rdd_avg_pct_met_above_math_undup_75$tau
+rdd_avg_pct_met_above_math_undup_75$se
+rdd_avg_pct_met_above_math_undup_75$ci
+
+rdd_plot_avg_pct_met_above_math_undup_75 <- gp_rdd_plot(rdd_avg_pct_met_above_math_undup_75) +
+  geom_vline(xintercept = 75, linetype = "dashed") +
+  coord_cartesian(xlim = c(50, 95)) +
+  labs(title = "% MetAbove Math ~ Undup (75% Cutoff)")
+print(rdd_plot_avg_pct_met_above_math_undup_75)
+```
+
+# GP RDD - avg_pct_not_met_ELA ~ FRPM % - 35 cutoff
+```{r}
+rdd_avg_pct_not_met_ela_frpm_35 <- gp_rdd(df_clean$frpm_percent, df_clean$avg_pct_not_met_ELA, 35)
+rdd_avg_pct_not_met_ela_frpm_35$tau
+rdd_avg_pct_not_met_ela_frpm_35$se
+rdd_avg_pct_not_met_ela_frpm_35$ci
+
+rdd_plot_avg_pct_not_met_ela_frpm_35 <- gp_rdd_plot(rdd_avg_pct_not_met_ela_frpm_35) +
+  geom_vline(xintercept = 35, linetype = "dashed") +
+  coord_cartesian(xlim = c(20, 60)) +
+  labs(title = "% Not Met ELA ~ FRPM (35% Cutoff)")
+print(rdd_plot_avg_pct_not_met_ela_frpm_35)
+```
+
+# GP RDD - avg_pct_not_met_ELA ~ FRPM % - 75 cutoff
+```{r}
+rdd_avg_pct_not_met_ela_frpm_75 <- gp_rdd(df_clean$frpm_percent, df_clean$avg_pct_not_met_ELA, 75)
+rdd_avg_pct_not_met_ela_frpm_75$tau
+rdd_avg_pct_not_met_ela_frpm_75$se
+rdd_avg_pct_not_met_ela_frpm_75$ci
+
+rdd_plot_avg_pct_not_met_ela_frpm_75 <- gp_rdd_plot(rdd_avg_pct_not_met_ela_frpm_75) +
+  geom_vline(xintercept = 75, linetype = "dashed") +
+  coord_cartesian(xlim = c(50, 95)) +
+  labs(title = "% Not Met ELA ~ FRPM (75% Cutoff)")
+print(rdd_plot_avg_pct_not_met_ela_frpm_75)
+```
+
+# GP RDD - avg_pct_not_met_ELA ~ Undup % - 55 cutoff
+```{r}
+rdd_avg_pct_not_met_ela_undup_55 <- gp_rdd(df_clean$undup_pct, df_clean$avg_pct_not_met_ELA, 55)
+rdd_avg_pct_not_met_ela_undup_55$tau
+rdd_avg_pct_not_met_ela_undup_55$se
+rdd_avg_pct_not_met_ela_undup_55$ci
+
+rdd_plot_avg_pct_not_met_ela_undup_55 <- gp_rdd_plot(rdd_avg_pct_not_met_ela_undup_55) +
+  geom_vline(xintercept = 55, linetype = "dashed") +
+  coord_cartesian(xlim = c(30, 80)) +
+  labs(title = "% Not Met ELA ~ Undup (55% Cutoff)")
+print(rdd_plot_avg_pct_not_met_ela_undup_55)
+```
+
+# GP RDD - avg_pct_not_met_ELA ~ Undup % - 75 cutoff
+```{r}
+rdd_avg_pct_not_met_ela_undup_75 <- gp_rdd(df_clean$undup_pct, df_clean$avg_pct_not_met_ELA, 75)
+rdd_avg_pct_not_met_ela_undup_75$tau
+rdd_avg_pct_not_met_ela_undup_75$se
+rdd_avg_pct_not_met_ela_undup_75$ci
+
+rdd_plot_avg_pct_not_met_ela_undup_75 <- gp_rdd_plot(rdd_avg_pct_not_met_ela_undup_75) +
+  geom_vline(xintercept = 75, linetype = "dashed") +
+  coord_cartesian(xlim = c(50, 95)) +
+  labs(title = "% Not Met ELA ~ Undup (75% Cutoff)")
+print(rdd_plot_avg_pct_not_met_ela_undup_75)
+```
+
+# GP RDD - avg_pct_not_met_Math ~ FRPM % - 35 cutoff
+```{r}
+rdd_avg_pct_not_met_math_frpm_35 <- gp_rdd(df_clean$frpm_percent, df_clean$avg_pct_not_met_Math, 35)
+rdd_avg_pct_not_met_math_frpm_35$tau
+rdd_avg_pct_not_met_math_frpm_35$se
+rdd_avg_pct_not_met_math_frpm_35$ci
+
+rdd_plot_avg_pct_not_met_math_frpm_35 <- gp_rdd_plot(rdd_avg_pct_not_met_math_frpm_35) +
+  geom_vline(xintercept = 35, linetype = "dashed") +
+  coord_cartesian(xlim = c(20, 60)) +
+  labs(title = "% Not Met Math ~ FRPM (35% Cutoff)")
+print(rdd_plot_avg_pct_not_met_math_frpm_35)
+```
+
+# GP RDD - avg_pct_not_met_Math ~ FRPM % - 75 cutoff
+```{r}
+rdd_avg_pct_not_met_math_frpm_75 <- gp_rdd(df_clean$frpm_percent, df_clean$avg_pct_not_met_Math, 75)
+rdd_avg_pct_not_met_math_frpm_75$tau
+rdd_avg_pct_not_met_math_frpm_75$se
+rdd_avg_pct_not_met_math_frpm_75$ci
+
+rdd_plot_avg_pct_not_met_math_frpm_75 <- gp_rdd_plot(rdd_avg_pct_not_met_math_frpm_75) +
+  geom_vline(xintercept = 75, linetype = "dashed") +
+  coord_cartesian(xlim = c(50, 95)) +
+  labs(title = "% Not Met Math ~ FRPM (75% Cutoff)")
+print(rdd_plot_avg_pct_not_met_math_frpm_75)
+```
+
+# GP RDD - avg_pct_not_met_Math ~ Undup % - 55 cutoff
+```{r}
+rdd_avg_pct_not_met_math_undup_55 <- gp_rdd(df_clean$undup_pct, df_clean$avg_pct_not_met_Math, 55)
+rdd_avg_pct_not_met_math_undup_55$tau
+rdd_avg_pct_not_met_math_undup_55$se
+rdd_avg_pct_not_met_math_undup_55$ci
+
+rdd_plot_avg_pct_not_met_math_undup_55 <- gp_rdd_plot(rdd_avg_pct_not_met_math_undup_55) +
+  geom_vline(xintercept = 55, linetype = "dashed") +
+  coord_cartesian(xlim = c(30, 80)) +
+  labs(title = "% Not Met Math ~ Undup (55% Cutoff)")
+print(rdd_plot_avg_pct_not_met_math_undup_55)
+```
+
+# GP RDD - avg_pct_not_met_Math ~ Undup % - 75 cutoff
+```{r}
+rdd_avg_pct_not_met_math_undup_75 <- gp_rdd(df_clean$undup_pct, df_clean$avg_pct_not_met_Math, 75)
+rdd_avg_pct_not_met_math_undup_75$tau
+rdd_avg_pct_not_met_math_undup_75$se
+rdd_avg_pct_not_met_math_undup_75$ci
+
+rdd_plot_avg_pct_not_met_math_undup_75 <- gp_rdd_plot(rdd_avg_pct_not_met_math_undup_75) +
+  geom_vline(xintercept = 75, linetype = "dashed") +
+  coord_cartesian(xlim = c(50, 95)) +
+  labs(title = "% Not Met Math ~ Undup (75% Cutoff)")
+print(rdd_plot_avg_pct_not_met_math_undup_75)
+```
+
+
+# GP RDD - avg_pct_not_met_Math ~ FRPM % - 35 cutoff
+```{r}
+rdd_avg_pct_not_met_math_frpm_35 <- gp_rdd(df_clean$frpm_percent, df_clean$avg_pct_not_met_Math, 35)
+rdd_avg_pct_not_met_math_frpm_35$tau
+rdd_avg_pct_not_met_math_frpm_35$se
+rdd_avg_pct_not_met_math_frpm_35$ci
+
+rdd_plot_avg_pct_not_met_math_frpm_35 <- gp_rdd_plot(rdd_avg_pct_not_met_math_frpm_35) +
+  geom_vline(xintercept = 35, linetype = "dashed") +
+  coord_cartesian(xlim = c(20, 60)) +
+  labs(title = "% Not Met Math ~ FRPM (35% Cutoff)")
+print(rdd_plot_avg_pct_not_met_math_frpm_35)
+```
+
+# GP RDD - avg_pct_not_met_Math ~ FRPM % - 75 cutoff
+```{r}
+rdd_avg_pct_not_met_math_frpm_75 <- gp_rdd(df_clean$frpm_percent, df_clean$avg_pct_not_met_Math, 75)
+rdd_avg_pct_not_met_math_frpm_75$tau
+rdd_avg_pct_not_met_math_frpm_75$se
+rdd_avg_pct_not_met_math_frpm_75$ci
+
+rdd_plot_avg_pct_not_met_math_frpm_75 <- gp_rdd_plot(rdd_avg_pct_not_met_math_frpm_75) +
+  geom_vline(xintercept = 75, linetype = "dashed") +
+  coord_cartesian(xlim = c(50, 95)) +
+  labs(title = "% Not Met Math ~ FRPM (75% Cutoff)")
+print(rdd_plot_avg_pct_not_met_math_frpm_75)
+```
+
+# GP RDD - avg_pct_not_met_Math ~ Undup % - 55 cutoff
+```{r}
+rdd_avg_pct_not_met_math_undup_55 <- gp_rdd(df_clean$undup_pct, df_clean$avg_pct_not_met_Math, 55)
+rdd_avg_pct_not_met_math_undup_55$tau
+rdd_avg_pct_not_met_math_undup_55$se
+rdd_avg_pct_not_met_math_undup_55$ci
+
+rdd_plot_avg_pct_not_met_math_undup_55 <- gp_rdd_plot(rdd_avg_pct_not_met_math_undup_55) +
+  geom_vline(xintercept = 55, linetype = "dashed") +
+  coord_cartesian(xlim = c(30, 80)) +
+  labs(title = "% Not Met Math ~ Undup (55% Cutoff)")
+print(rdd_plot_avg_pct_not_met_math_undup_55)
+```
+
+# GP RDD - avg_pct_not_met_Math ~ Undup % - 75 cutoff
+```{r}
+rdd_avg_pct_not_met_math_undup_75 <- gp_rdd(df_clean$undup_pct, df_clean$avg_pct_not_met_Math, 75)
+rdd_avg_pct_not_met_math_undup_75$tau
+rdd_avg_pct_not_met_math_undup_75$se
+rdd_avg_pct_not_met_math_undup_75$ci
+
+rdd_plot_avg_pct_not_met_math_undup_75 <- gp_rdd_plot(rdd_avg_pct_not_met_math_undup_75) +
+  geom_vline(xintercept = 75, linetype = "dashed") +
+  coord_cartesian(xlim = c(50, 95)) +
+  labs(title = "% Not Met Math ~ Undup (75% Cutoff)")
+print(rdd_plot_avg_pct_not_met_math_undup_75)
+```
+
+# GP RDD - avg_scale_score_ELA ~ FRPM % - 35 cutoff
+```{r}
+rdd_avg_scale_score_ela_frpm_35 <- gp_rdd(df_clean$frpm_percent, df_clean$avg_scale_score_ELA, 35)
+rdd_avg_scale_score_ela_frpm_35$tau
+rdd_avg_scale_score_ela_frpm_35$se
+rdd_avg_scale_score_ela_frpm_35$ci
+
+rdd_plot_avg_scale_score_ela_frpm_35 <- gp_rdd_plot(rdd_avg_scale_score_ela_frpm_35) +
+  geom_vline(xintercept = 35, linetype = "dashed") +
+  coord_cartesian(xlim = c(20, 60)) +
+  labs(title = "Scale Score ELA ~ FRPM (35% Cutoff)")
+print(rdd_plot_avg_scale_score_ela_frpm_35)
+```
+
+# GP RDD - avg_scale_score_ELA ~ FRPM % - 75 cutoff
+```{r}
+rdd_avg_scale_score_ela_frpm_75 <- gp_rdd(df_clean$frpm_percent, df_clean$avg_scale_score_ELA, 75)
+rdd_avg_scale_score_ela_frpm_75$tau
+rdd_avg_scale_score_ela_frpm_75$se
+rdd_avg_scale_score_ela_frpm_75$ci
+
+rdd_plot_avg_scale_score_ela_frpm_75 <- gp_rdd_plot(rdd_avg_scale_score_ela_frpm_75) +
+  geom_vline(xintercept = 75, linetype = "dashed") +
+  coord_cartesian(xlim = c(50, 95)) +
+  labs(title = "Scale Score ELA ~ FRPM (75% Cutoff)")
+print(rdd_plot_avg_scale_score_ela_frpm_75)
+```
+
+# GP RDD - avg_scale_score_ELA ~ Undup % - 55 cutoff
+```{r}
+rdd_avg_scale_score_ela_undup_55 <- gp_rdd(df_clean$undup_pct, df_clean$avg_scale_score_ELA, 55)
+rdd_avg_scale_score_ela_undup_55$tau
+rdd_avg_scale_score_ela_undup_55$se
+rdd_avg_scale_score_ela_undup_55$ci
+
+rdd_plot_avg_scale_score_ela_undup_55 <- gp_rdd_plot(rdd_avg_scale_score_ela_undup_55) +
+  geom_vline(xintercept = 55, linetype = "dashed") +
+  coord_cartesian(xlim = c(30, 80)) +
+  labs(title = "Scale Score ELA ~ Undup (55% Cutoff)")
+print(rdd_plot_avg_scale_score_ela_undup_55)
+```
+
+# GP RDD - avg_scale_score_ELA ~ Undup % - 75 cutoff
+```{r}
+rdd_avg_scale_score_ela_undup_75 <- gp_rdd(df_clean$undup_pct, df_clean$avg_scale_score_ELA, 75)
+rdd_avg_scale_score_ela_undup_75$tau
+rdd_avg_scale_score_ela_undup_75$se
+rdd_avg_scale_score_ela_undup_75$ci
+
+rdd_plot_avg_scale_score_ela_undup_75 <- gp_rdd_plot(rdd_avg_scale_score_ela_undup_75) +
+  geom_vline(xintercept = 75, linetype = "dashed") +
+  coord_cartesian(xlim = c(50, 95)) +
+  labs(title = "Scale Score ELA ~ Undup (75% Cutoff)")
+print(rdd_plot_avg_scale_score_ela_undup_75)
+```
+
+
+# GP RDD - avg_scale_score_Math ~ FRPM % - 35 cutoff
+```{r}
+rdd_avg_scale_score_math_frpm_35 <- gp_rdd(df_clean$frpm_percent, df_clean$avg_scale_score_Math, 35)
+rdd_avg_scale_score_math_frpm_35$tau
+rdd_avg_scale_score_math_frpm_35$se
+rdd_avg_scale_score_math_frpm_35$ci
+
+rdd_plot_avg_scale_score_math_frpm_35 <- gp_rdd_plot(rdd_avg_scale_score_math_frpm_35) +
+  geom_vline(xintercept = 35, linetype = "dashed") +
+  coord_cartesian(xlim = c(20, 60)) +
+  labs(title = "Scale Score Math ~ FRPM (35% Cutoff)")
+print(rdd_plot_avg_scale_score_math_frpm_35)
+```
+
+# GP RDD - avg_scale_score_Math ~ FRPM % - 75 cutoff
+```{r}
+rdd_avg_scale_score_math_frpm_75 <- gp_rdd(df_clean$frpm_percent, df_clean$avg_scale_score_Math, 75)
+rdd_avg_scale_score_math_frpm_75$tau
+rdd_avg_scale_score_math_frpm_75$se
+rdd_avg_scale_score_math_frpm_75$ci
+
+rdd_plot_avg_scale_score_math_frpm_75 <- gp_rdd_plot(rdd_avg_scale_score_math_frpm_75) +
+  geom_vline(xintercept = 75, linetype = "dashed") +
+  coord_cartesian(xlim = c(50, 95)) +
+  labs(title = "Scale Score Math ~ FRPM (75% Cutoff)")
+print(rdd_plot_avg_scale_score_math_frpm_75)
+```
+
+# GP RDD - avg_scale_score_Math ~ Undup % - 55 cutoff
+```{r}
+rdd_avg_scale_score_math_undup_55 <- gp_rdd(df_clean$undup_pct, df_clean$avg_scale_score_Math, 55)
+rdd_avg_scale_score_math_undup_55$tau
+rdd_avg_scale_score_math_undup_55$se
+rdd_avg_scale_score_math_undup_55$ci
+
+rdd_plot_avg_scale_score_math_undup_55 <- gp_rdd_plot(rdd_avg_scale_score_math_undup_55) +
+  geom_vline(xintercept = 55, linetype = "dashed") +
+  coord_cartesian(xlim = c(30, 80)) +
+  labs(title = "Scale Score Math ~ Undup (55% Cutoff)")
+print(rdd_plot_avg_scale_score_math_undup_55)
+```
+
+# GP RDD - avg_scale_score_Math ~ Undup % - 75 cutoff
+```{r}
+rdd_avg_scale_score_math_undup_75 <- gp_rdd(df_clean$undup_pct, df_clean$avg_scale_score_Math, 75)
+rdd_avg_scale_score_math_undup_75$tau
+rdd_avg_scale_score_math_undup_75$se
+rdd_avg_scale_score_math_undup_75$ci
+
+rdd_plot_avg_scale_score_math_undup_75 <- gp_rdd_plot(rdd_avg_scale_score_math_undup_75) +
+  geom_vline(xintercept = 75, linetype = "dashed") +
+  coord_cartesian(xlim = c(50, 95)) +
+  labs(title = "Scale Score Math ~ Undup (75% Cutoff)")
+print(rdd_plot_avg_scale_score_math_undup_75)
+```
+# Outcome Summary Table
+```{r}
+# Utility function to extract results from a gp_rdd object
+extract_rdd_result <- function(obj, label) {
+  tibble(
+    model = label,
+    tau = obj$tau,
+    se = obj$se,
+    ci_lower = obj$ci[1],
+    ci_upper = obj$ci[2],
+    p_value = 2 * pnorm(-abs(obj$tau / obj$se)),
+    significant = ifelse(p_value < 0.05, TRUE, FALSE)
+  )
+}
+
+# Combine all results into one table
+gp_rdd_summary_table <- bind_rows(
+  extract_rdd_result(rdd_avg_pct_met_above_ela_frpm_35, "% MetAbove ELA ~ FRPM (35%)"),
+  extract_rdd_result(rdd_avg_pct_met_above_ela_frpm_75, "% MetAbove ELA ~ FRPM (75%)"),
+  extract_rdd_result(rdd_avg_pct_met_above_ela_undup_55, "% MetAbove ELA ~ Undup (55%)"),
+  extract_rdd_result(rdd_avg_pct_met_above_ela_undup_75, "% MetAbove ELA ~ Undup (75%)"),
+  extract_rdd_result(rdd_avg_pct_met_above_math_frpm_35, "% MetAbove Math ~ FRPM (35%)"),
+  extract_rdd_result(rdd_avg_pct_met_above_math_frpm_75, "% MetAbove Math ~ FRPM (75%)"),
+  extract_rdd_result(rdd_avg_pct_met_above_math_undup_55, "% MetAbove Math ~ Undup (55%)"),
+  extract_rdd_result(rdd_avg_pct_met_above_math_undup_75, "% MetAbove Math ~ Undup (75%)"),
+  extract_rdd_result(rdd_res_absenteeism_frpm_35_cutoff, "Chronic Absenteeism ~ FRPM (35%)"),
+  extract_rdd_result(rdd_res_absenteeism_frpm_75_cutoff, "Chronic Absenteeism ~ FRPM (75%)"),
+  extract_rdd_result(rdd_res_absenteeism_BTB_35_cutoff, "BTB ~ FRPM (35%)"),
+  extract_rdd_result(rdd_res_absenteeism_BTB_75_cutoff, "BTB ~ FRPM (75%)"),
+  extract_rdd_result(rdd_res_absenteeism_undup_55_cutoff, "Chronic Absenteeism ~ Undup (55%)"),
+  extract_rdd_result(rdd_res_absenteeism_undup_75_cutoff, "Chronic Absenteeism ~ Undup (75%)"),
+  extract_rdd_result(rdd_avg_pct_not_met_math_frpm_35, "% Not Met Math ~ FRPM (35%)"),
+  extract_rdd_result(rdd_avg_pct_not_met_math_frpm_75, "% Not Met Math ~ FRPM (75%)"),
+  extract_rdd_result(rdd_avg_pct_not_met_math_undup_55, "% Not Met Math ~ Undup (55%)"),
+  extract_rdd_result(rdd_avg_pct_not_met_math_undup_75, "% Not Met Math ~ Undup (75%)"),
+  extract_rdd_result(rdd_avg_scale_score_ela_frpm_35, "Scale ELA ~ FRPM (35%)"),
+  extract_rdd_result(rdd_avg_scale_score_ela_frpm_75, "Scale ELA ~ FRPM (75%)"),
+  extract_rdd_result(rdd_avg_scale_score_ela_undup_55, "Scale ELA ~ Undup (55%)"),
+  extract_rdd_result(rdd_avg_scale_score_ela_undup_75, "Scale ELA ~ Undup (75%)"),
+  extract_rdd_result(rdd_avg_scale_score_math_frpm_35, "Scale Math ~ FRPM (35%)"),
+  extract_rdd_result(rdd_avg_scale_score_math_frpm_75, "Scale Math ~ FRPM (75%)"),
+  extract_rdd_result(rdd_avg_scale_score_math_undup_55, "Scale Math ~ Undup (55%)"),
+  extract_rdd_result(rdd_avg_scale_score_math_undup_75, "Scale Math ~ Undup (75%)")
+)
+
+print(gp_rdd_summary_table, n = Inf)
+```
+
+
+# Balance Tests with Xs
+```{r}
+# ──────────────────────────────────────────────────────────────
+# Balance Tests with GP-RDD for Two Running Variables (FRPM and UPP)
+# ──────────────────────────────────────────────────────────────
+library(dplyr)
+library(tidyr)
+library(gpss)
+
+# -----------------------------
+# Continuous Covariates Balance via GP-RDD
+# -----------------------------
+gp_rdd_balance_test_cont <- function(df, var, running_var, cutoff) {
+  df_sub <- df %>% filter(!is.na(.data[[var]]), !is.na(.data[[running_var]]))
+
+  rdd_result <- gp_rdd(df_sub[[running_var]], df_sub[[var]], cutoff)
+
+  tibble(
+    variable = var,
+    running_var = running_var,
+    cutoff = cutoff,
+    tau = rdd_result$tau,
+    se = rdd_result$se,
+    p_value = 2 * pnorm(-abs(rdd_result$tau / rdd_result$se)),
+    ci_lower = rdd_result$ci[1],
+    ci_upper = rdd_result$ci[2]
+  )
+}
+
+# -----------------------------
+# Binary Categorical Covariates Balance via GP-RDD
+# -----------------------------
+gp_rdd_balance_test_binary <- function(df, var, running_var, cutoff) {
+  df_sub <- df %>% filter(!is.na(.data[[var]]), !is.na(.data[[running_var]]))
+  df_sub <- df_sub %>% mutate(dummy = as.numeric(trimws(.data[[var]]) == "Yes" | .data[[var]] == 1))
+
+  rdd_result <- gp_rdd(df_sub[[running_var]], df_sub$dummy, cutoff)
+
+  tibble(
+    variable = var,
+    running_var = running_var,
+    cutoff = cutoff,
+    tau = rdd_result$tau,
+    se = rdd_result$se,
+    p_value = 2 * pnorm(-abs(rdd_result$tau / rdd_result$se)),
+    ci_lower = rdd_result$ci[1],
+    ci_upper = rdd_result$ci[2]
+  )
+}
+
+# -----------------------------
+# Run All Balance Tests
+# -----------------------------
+continuous_covariates <- c("pct_hispanic", "pct_black", "pct_white", "pct_asian", 
+                           "pct_two_or_more", "pct_other", "total_enroll")
+categorical_covariates <- c("Charter.School", "DASS")
+
+cutoffs <- list(
+  list(running = "frpm_rate", value = 0.35),
+  list(running = "frpm_rate", value = 0.75),
+  list(running = "undup_pct", value = 55),
+  list(running = "undup_pct", value = 75)
+)
+
+balance_all <- purrr::map_dfr(cutoffs, function(cut) {
+  cont_results <- purrr::map_dfr(continuous_covariates, ~gp_rdd_balance_test_cont(df_clean, .x, cut$running, cut$value))
+  cat_results  <- purrr::map_dfr(categorical_covariates, ~gp_rdd_balance_test_binary(df_clean, .x, cut$running, cut$value))
+  bind_rows(cont_results, cat_results)
+})
+
+# -----------------------------
+# Print results
+# -----------------------------
+print(balance_all, n=40)
+view(balance_all)
+```
+
+
+
+# Covariate-Adjusted RD $𝑌∼𝐷∣𝑋$
+
+```{r}
+library(dplyr)
+library(gpss)
+
+# Step 1: Prepare data with treatment variable and convert categorical vars to factor
+df_frpm_35 <- df_clean %>%
+  mutate(
+    treatment = as.integer(frpm_percent >= 35),
+    Charter.School = factor(Charter.School),
+    DASS = factor(DASS)
+  ) %>%
+  filter(complete.cases(across(all_of(c(
+    "chronic_absenteeism", "treatment", "frpm_percent",
+    "Charter.School", "DASS", "pct_hispanic", "pct_white", "pct_two_or_more"
+  )))))
+
+# Step 2: Fit covariate-adjusted GP-RDD model
+model_frpm_35 <- gpss(
+  chronic_absenteeism ~ treatment + frpm_percent + Charter.School + DASS +
+    pct_hispanic + pct_white + pct_two_or_more,
+  data = df_frpm_35
+)
+
+# Step 3: Create two counterfactual observations at the cutoff (treatment = 0 and 1)
+new_data <- df_frpm_35 %>%
+  slice(1) %>%
+  slice(rep(1, 2)) %>%
+  mutate(
+    treatment = c(0, 1),
+    frpm_percent = 35,
+    Charter.School = factor("Yes", levels = levels(df_frpm_35$Charter.School)),
+    DASS = factor("Yes", levels = levels(df_frpm_35$DASS)),
+    pct_hispanic = mean(df_frpm_35$pct_hispanic, na.rm = TRUE),
+    pct_white = mean(df_frpm_35$pct_white, na.rm = TRUE),
+    pct_two_or_more = mean(df_frpm_35$pct_two_or_more, na.rm = TRUE)
+  )
+
+# Step 4: Predict outcomes for both counterfactuals
+preds <- predict(model_frpm_35, new_data)
+
+# Step 5: Estimate treatment effect and uncertainty
+mu1 <- preds[2]
+mu0 <- preds[1]
+tau_hat <- mu1 - mu0
+
+# Extract posterior covariance matrix for the predicted values
+post_cov <- model_frpm_35$post_cov_orig
+se_tau <- sqrt(post_cov[2,2] + post_cov[1,1] - 2 * post_cov[1,2])
+
+# 95% CI
+ci_lower <- tau_hat - 1.96 * se_tau
+ci_upper <- tau_hat + 1.96 * se_tau
+
+# p-value (two-sided test)
+p_value <- 2 * pnorm(-abs(tau_hat / se_tau))
+
+# Step 6: Output all results
+print(tibble(
+  model = "chronic_absenteeism ~ frpm_percent adj @ 35%",
+  tau = tau_hat,
+  se = se_tau,
+  ci_lower = ci_lower,
+  ci_upper = ci_upper,
+  p_value = p_value,
+  significant = p_value < 0.05
+))
+
+```
+
+
+```{r}
+library(dplyr)
+library(gpss)   # >=0.2.0
+library(tibble)
+
+# ---- settings ------------------------------------------------------------
+outcomes <- c(
+  "chronic_absenteeism",
+  "btb",
+  "avg_pct_met_above_ELA",
+  "avg_pct_met_above_Math",
+  "avg_pct_not_met_ELA",
+  "avg_pct_not_met_Math",
+  "avg_scale_score_ELA",
+  "avg_scale_score_Math"
+)
+runvar   <- "frpm_percent"
+cutoff   <- 35
+local_bw <- 5
+cont_covs <- c("pct_hispanic", "pct_white", "pct_two_or_more")
+
+all_results <- list()
+
+for (outcome in outcomes) {
+  # prepare data for this outcome
+  df <- df_clean %>%
+    mutate(
+      Charter = as.numeric(trimws(Charter.School) == "Yes"),
+      DASS    = as.numeric(trimws(DASS) == "Yes")
+    ) %>%
+    filter(!is.na(.data[[outcome]]), !is.na(.data[[runvar]]))
+
+  # split
+  left  <- df %>% filter(.data[[runvar]] < cutoff)
+  right <- df %>% filter(.data[[runvar]] >= cutoff)
+  if (nrow(left) < 1 || nrow(right) < 1) {
+    warning("Skipping ", outcome, ": insufficient data on one side of cutoff (left=", nrow(left), ", right=", nrow(right), ")")
+    next
+  }
+
+  # --- unadjusted ----------------------------------------------------------
+  fml_u <- reformulate(runvar, response = outcome)
+  mod_L_u <- tryCatch(gpss(fml_u, data = left, optimize = TRUE), error = function(e) { warning("gpss error (unadj) for ", outcome, ": ", e$message); return(NULL) })
+  mod_R_u <- tryCatch(gpss(fml_u, data = right, optimize = TRUE), error = function(e) { warning("gpss error (unadj) for ", outcome, ": ", e$message); return(NULL) })
+  if (is.null(mod_L_u) || is.null(mod_R_u)) next
+
+  profile_u <- tibble(!!runvar := cutoff)
+  pred_L_u <- gp_predict(mod_L_u, profile_u)
+  pred_R_u <- gp_predict(mod_R_u, profile_u)
+
+  if (is.null(pred_L_u$Ys_mean_orig) || is.null(pred_R_u$Ys_mean_orig) ||
+      is.null(pred_L_u$Ys_cov_orig)  || is.null(pred_R_u$Ys_cov_orig)) {
+    warning("Skipping unadjusted for ", outcome, ": missing prediction components")
+  } else {
+    mu_L_u  <- drop(pred_L_u$Ys_mean_orig)
+    mu_R_u  <- drop(pred_R_u$Ys_mean_orig)
+    var_L_u <- drop(pred_L_u$Ys_cov_orig)
+    var_R_u <- drop(pred_R_u$Ys_cov_orig)
+
+    tau_u  <- as.numeric(mu_R_u - mu_L_u)
+    se_u   <- sqrt(var_L_u + var_R_u)
+    ci_u   <- tau_u + c(-1.96, 1.96) * se_u
+    pval_u <- 2 * pnorm(-abs(tau_u / se_u))
+
+    result_unadj <- tibble(
+      outcome      = outcome,
+      running_var  = runvar,
+      cutoff       = cutoff,
+      model        = "Unadjusted",
+      tau          = tau_u,
+      se           = se_u,
+      ci_lower     = ci_u[1],
+      ci_upper     = ci_u[2],
+      p_value      = pval_u,
+      significant  = pval_u < 0.05
+    )
+    all_results <- append(all_results, list(result_unadj))
+  }
+
+  # --- covariate-adjusted --------------------------------------------------
+  df_adj <- df %>% filter(complete.cases(across(all_of(c(cont_covs, "Charter", "DASS")))))
+  left_a  <- df_adj %>% filter(.data[[runvar]] < cutoff)
+  right_a <- df_adj %>% filter(.data[[runvar]] >= cutoff)
+  if (nrow(left_a) < 1 || nrow(right_a) < 1) {
+    warning("Skipping covariate-adjusted for ", outcome, ": insufficient adjusted data (left=", nrow(left_a), ", right=", nrow(right_a), ")")
+    next
+  }
+
+  predictors <- c(runvar, cont_covs, "Charter", "DASS")
+  fml_a <- reformulate(predictors, response = outcome)
+  mod_L_a <- tryCatch(gpss(fml_a, data = left_a, optimize = TRUE), error = function(e) { warning("gpss error (adj) for ", outcome, ": ", e$message); return(NULL) })
+  mod_R_a <- tryCatch(gpss(fml_a, data = right_a, optimize = TRUE), error = function(e) { warning("gpss error (adj) for ", outcome, ": ", e$message); return(NULL) })
+  if (is.null(mod_L_a) || is.null(mod_R_a)) next
+
+  profile_a <- df_adj %>%
+    filter(between(.data[[runvar]], cutoff - local_bw, cutoff + local_bw)) %>%
+    summarise(
+      across(all_of(cont_covs), ~ mean(.x, na.rm = TRUE)),
+      Charter = mean(Charter, na.rm = TRUE),
+      DASS = mean(DASS, na.rm = TRUE)
+    )
+  profile_a[[runvar]] <- cutoff
+  profile_a <- profile_a %>% select(all_of(predictors))
+
+  pred_L_a <- gp_predict(mod_L_a, profile_a)
+  pred_R_a <- gp_predict(mod_R_a, profile_a)
+
+  if (is.null(pred_L_a$Ys_mean_orig) || is.null(pred_R_a$Ys_mean_orig) ||
+      is.null(pred_L_a$Ys_cov_orig)  || is.null(pred_R_a$Ys_cov_orig)) {
+    warning("Skipping covariate-adjusted for ", outcome, ": missing prediction components")
+    next
+  }
+
+  mu_L_a  <- drop(pred_L_a$Ys_mean_orig)
+  mu_R_a  <- drop(pred_R_a$Ys_mean_orig)
+  var_L_a <- drop(pred_L_a$Ys_cov_orig)
+  var_R_a <- drop(pred_R_a$Ys_cov_orig)
+
+  tau_a  <- as.numeric(mu_R_a - mu_L_a)
+  se_a   <- sqrt(var_L_a + var_R_a)
+  ci_a   <- tau_a + c(-1.96, 1.96) * se_a
+  pval_a <- 2 * pnorm(-abs(tau_a / se_a))
+
+  result_adj <- tibble(
+    outcome      = outcome,
+    running_var  = runvar,
+    cutoff       = cutoff,
+    model        = "Covariate-adjusted",
+    tau          = tau_a,
+    se           = se_a,
+    ci_lower     = ci_a[1],
+    ci_upper     = ci_a[2],
+    p_value      = pval_a,
+    significant  = pval_a < 0.05
+  )
+  all_results <- append(all_results, list(result_adj))
+}
+
+# combine everything
+comparison <- bind_rows(all_results)
+print(comparison)
+```
+
+
+```{r}
+library(dplyr)
+library(gpss)   # >=0.2.0
+library(tibble)
+
+# ---- settings ------------------------------------------------------------
+outcomes <- c(
+  "chronic_absenteeism",
+  "btb",
+  "avg_pct_met_above_ELA",
+  "avg_pct_met_above_Math",
+  "avg_pct_not_met_ELA",
+  "avg_pct_not_met_Math",
+  "avg_scale_score_ELA",
+  "avg_scale_score_Math"
+)
+runvar   <- "frpm_percent"
+cutoff   <- 75
+local_bw <- 5
+cont_covs <- c("pct_hispanic", "pct_white", "pct_two_or_more")
+
+all_results <- list()
+
+for (outcome in outcomes) {
+  # prepare data for this outcome
+  df <- df_clean %>%
+    mutate(
+      Charter = as.numeric(trimws(Charter.School) == "Yes"),
+      DASS    = as.numeric(trimws(DASS) == "Yes")
+    ) %>%
+    filter(!is.na(.data[[outcome]]), !is.na(.data[[runvar]]))
+
+  # split
+  left  <- df %>% filter(.data[[runvar]] < cutoff)
+  right <- df %>% filter(.data[[runvar]] >= cutoff)
+  if (nrow(left) < 1 || nrow(right) < 1) {
+    warning("Skipping ", outcome, ": insufficient data on one side of cutoff (left=", nrow(left), ", right=", nrow(right), ")")
+    next
+  }
+
+  # --- unadjusted ----------------------------------------------------------
+  fml_u <- reformulate(runvar, response = outcome)
+  mod_L_u <- tryCatch(gpss(fml_u, data = left, optimize = TRUE), error = function(e) { warning("gpss error (unadj) for ", outcome, ": ", e$message); return(NULL) })
+  mod_R_u <- tryCatch(gpss(fml_u, data = right, optimize = TRUE), error = function(e) { warning("gpss error (unadj) for ", outcome, ": ", e$message); return(NULL) })
+  if (is.null(mod_L_u) || is.null(mod_R_u)) next
+
+  profile_u <- tibble(!!runvar := cutoff)
+  pred_L_u <- gp_predict(mod_L_u, profile_u)
+  pred_R_u <- gp_predict(mod_R_u, profile_u)
+
+  if (is.null(pred_L_u$Ys_mean_orig) || is.null(pred_R_u$Ys_mean_orig) ||
+      is.null(pred_L_u$Ys_cov_orig)  || is.null(pred_R_u$Ys_cov_orig)) {
+    warning("Skipping unadjusted for ", outcome, ": missing prediction components")
+  } else {
+    mu_L_u  <- drop(pred_L_u$Ys_mean_orig)
+    mu_R_u  <- drop(pred_R_u$Ys_mean_orig)
+    var_L_u <- drop(pred_L_u$Ys_cov_orig)
+    var_R_u <- drop(pred_R_u$Ys_cov_orig)
+
+    tau_u  <- as.numeric(mu_R_u - mu_L_u)
+    se_u   <- sqrt(var_L_u + var_R_u)
+    ci_u   <- tau_u + c(-1.96, 1.96) * se_u
+    pval_u <- 2 * pnorm(-abs(tau_u / se_u))
+
+    result_unadj <- tibble(
+      outcome      = outcome,
+      running_var  = runvar,
+      cutoff       = cutoff,
+      model        = "Unadjusted",
+      tau          = tau_u,
+      se           = se_u,
+      ci_lower     = ci_u[1],
+      ci_upper     = ci_u[2],
+      p_value      = pval_u,
+      significant  = pval_u < 0.05
+    )
+    all_results <- append(all_results, list(result_unadj))
+  }
+
+  # --- covariate-adjusted --------------------------------------------------
+  df_adj <- df %>% filter(complete.cases(across(all_of(c(cont_covs, "Charter", "DASS")))))
+  left_a  <- df_adj %>% filter(.data[[runvar]] < cutoff)
+  right_a <- df_adj %>% filter(.data[[runvar]] >= cutoff)
+  if (nrow(left_a) < 1 || nrow(right_a) < 1) {
+    warning("Skipping covariate-adjusted for ", outcome, ": insufficient adjusted data (left=", nrow(left_a), ", right=", nrow(right_a), ")")
+    next
+  }
+
+  predictors <- c(runvar, cont_covs, "Charter", "DASS")
+  fml_a <- reformulate(predictors, response = outcome)
+  mod_L_a <- tryCatch(gpss(fml_a, data = left_a, optimize = TRUE), error = function(e) { warning("gpss error (adj) for ", outcome, ": ", e$message); return(NULL) })
+  mod_R_a <- tryCatch(gpss(fml_a, data = right_a, optimize = TRUE), error = function(e) { warning("gpss error (adj) for ", outcome, ": ", e$message); return(NULL) })
+  if (is.null(mod_L_a) || is.null(mod_R_a)) next
+
+  profile_a <- df_adj %>%
+    filter(between(.data[[runvar]], cutoff - local_bw, cutoff + local_bw)) %>%
+    summarise(
+      across(all_of(cont_covs), ~ mean(.x, na.rm = TRUE)),
+      Charter = mean(Charter, na.rm = TRUE),
+      DASS = mean(DASS, na.rm = TRUE)
+    )
+  profile_a[[runvar]] <- cutoff
+  profile_a <- profile_a %>% select(all_of(predictors))
+
+  pred_L_a <- gp_predict(mod_L_a, profile_a)
+  pred_R_a <- gp_predict(mod_R_a, profile_a)
+
+  if (is.null(pred_L_a$Ys_mean_orig) || is.null(pred_R_a$Ys_mean_orig) ||
+      is.null(pred_L_a$Ys_cov_orig)  || is.null(pred_R_a$Ys_cov_orig)) {
+    warning("Skipping covariate-adjusted for ", outcome, ": missing prediction components")
+    next
+  }
+
+  mu_L_a  <- drop(pred_L_a$Ys_mean_orig)
+  mu_R_a  <- drop(pred_R_a$Ys_mean_orig)
+  var_L_a <- drop(pred_L_a$Ys_cov_orig)
+  var_R_a <- drop(pred_R_a$Ys_cov_orig)
+
+  tau_a  <- as.numeric(mu_R_a - mu_L_a)
+  se_a   <- sqrt(var_L_a + var_R_a)
+  ci_a   <- tau_a + c(-1.96, 1.96) * se_a
+  pval_a <- 2 * pnorm(-abs(tau_a / se_a))
+
+  result_adj <- tibble(
+    outcome      = outcome,
+    running_var  = runvar,
+    cutoff       = cutoff,
+    model        = "Covariate-adjusted",
+    tau          = tau_a,
+    se           = se_a,
+    ci_lower     = ci_a[1],
+    ci_upper     = ci_a[2],
+    p_value      = pval_a,
+    significant  = pval_a < 0.05
+  )
+  all_results <- append(all_results, list(result_adj))
+}
+
+# combine everything
+comparison <- bind_rows(all_results)
+print(comparison)
+```
+
+
+```{r}
+library(dplyr)
+library(gpss)   # >=0.2.0
+library(tibble)
+
+# ---- settings ------------------------------------------------------------
+outcomes <- c(
+  "chronic_absenteeism",
+  "btb",
+  "avg_pct_met_above_ELA",
+  "avg_pct_met_above_Math",
+  "avg_pct_not_met_ELA",
+  "avg_pct_not_met_Math",
+  "avg_scale_score_ELA",
+  "avg_scale_score_Math"
+)
+runvar   <- "undup_pct"
+cutoff   <- 40
+local_bw <- 5
+cont_covs <- c("pct_hispanic", "pct_white", "pct_two_or_more")
+
+all_results <- list()
+
+for (outcome in outcomes) {
+  # prepare data for this outcome
+  df <- df_clean %>%
+    mutate(
+      Charter = as.numeric(trimws(Charter.School) == "Yes"),
+      DASS    = as.numeric(trimws(DASS) == "Yes")
+    ) %>%
+    filter(!is.na(.data[[outcome]]), !is.na(.data[[runvar]]))
+
+  # split
+  left  <- df %>% filter(.data[[runvar]] < cutoff)
+  right <- df %>% filter(.data[[runvar]] >= cutoff)
+  if (nrow(left) < 1 || nrow(right) < 1) {
+    warning("Skipping ", outcome, ": insufficient data on one side of cutoff (left=", nrow(left), ", right=", nrow(right), ")")
+    next
+  }
+
+  # --- unadjusted ----------------------------------------------------------
+  fml_u <- reformulate(runvar, response = outcome)
+  mod_L_u <- tryCatch(gpss(fml_u, data = left, optimize = TRUE), error = function(e) { warning("gpss error (unadj) for ", outcome, ": ", e$message); return(NULL) })
+  mod_R_u <- tryCatch(gpss(fml_u, data = right, optimize = TRUE), error = function(e) { warning("gpss error (unadj) for ", outcome, ": ", e$message); return(NULL) })
+  if (is.null(mod_L_u) || is.null(mod_R_u)) next
+
+  profile_u <- tibble(!!runvar := cutoff)
+  pred_L_u <- gp_predict(mod_L_u, profile_u)
+  pred_R_u <- gp_predict(mod_R_u, profile_u)
+
+  if (is.null(pred_L_u$Ys_mean_orig) || is.null(pred_R_u$Ys_mean_orig) ||
+      is.null(pred_L_u$Ys_cov_orig)  || is.null(pred_R_u$Ys_cov_orig)) {
+    warning("Skipping unadjusted for ", outcome, ": missing prediction components")
+  } else {
+    mu_L_u  <- drop(pred_L_u$Ys_mean_orig)
+    mu_R_u  <- drop(pred_R_u$Ys_mean_orig)
+    var_L_u <- drop(pred_L_u$Ys_cov_orig)
+    var_R_u <- drop(pred_R_u$Ys_cov_orig)
+
+    tau_u  <- as.numeric(mu_R_u - mu_L_u)
+    se_u   <- sqrt(var_L_u + var_R_u)
+    ci_u   <- tau_u + c(-1.96, 1.96) * se_u
+    pval_u <- 2 * pnorm(-abs(tau_u / se_u))
+
+    result_unadj <- tibble(
+      outcome      = outcome,
+      running_var  = runvar,
+      cutoff       = cutoff,
+      model        = "Unadjusted",
+      tau          = tau_u,
+      se           = se_u,
+      ci_lower     = ci_u[1],
+      ci_upper     = ci_u[2],
+      p_value      = pval_u,
+      significant  = pval_u < 0.05
+    )
+    all_results <- append(all_results, list(result_unadj))
+  }
+
+  # --- covariate-adjusted --------------------------------------------------
+  df_adj <- df %>% filter(complete.cases(across(all_of(c(cont_covs, "Charter", "DASS")))))
+  left_a  <- df_adj %>% filter(.data[[runvar]] < cutoff)
+  right_a <- df_adj %>% filter(.data[[runvar]] >= cutoff)
+  if (nrow(left_a) < 1 || nrow(right_a) < 1) {
+    warning("Skipping covariate-adjusted for ", outcome, ": insufficient adjusted data (left=", nrow(left_a), ", right=", nrow(right_a), ")")
+    next
+  }
+
+  predictors <- c(runvar, cont_covs, "Charter", "DASS")
+  fml_a <- reformulate(predictors, response = outcome)
+  mod_L_a <- tryCatch(gpss(fml_a, data = left_a, optimize = TRUE), error = function(e) { warning("gpss error (adj) for ", outcome, ": ", e$message); return(NULL) })
+  mod_R_a <- tryCatch(gpss(fml_a, data = right_a, optimize = TRUE), error = function(e) { warning("gpss error (adj) for ", outcome, ": ", e$message); return(NULL) })
+  if (is.null(mod_L_a) || is.null(mod_R_a)) next
+
+  profile_a <- df_adj %>%
+    filter(between(.data[[runvar]], cutoff - local_bw, cutoff + local_bw)) %>%
+    summarise(
+      across(all_of(cont_covs), ~ mean(.x, na.rm = TRUE)),
+      Charter = mean(Charter, na.rm = TRUE),
+      DASS = mean(DASS, na.rm = TRUE)
+    )
+  profile_a[[runvar]] <- cutoff
+  profile_a <- profile_a %>% select(all_of(predictors))
+
+  pred_L_a <- gp_predict(mod_L_a, profile_a)
+  pred_R_a <- gp_predict(mod_R_a, profile_a)
+
+  if (is.null(pred_L_a$Ys_mean_orig) || is.null(pred_R_a$Ys_mean_orig) ||
+      is.null(pred_L_a$Ys_cov_orig)  || is.null(pred_R_a$Ys_cov_orig)) {
+    warning("Skipping covariate-adjusted for ", outcome, ": missing prediction components")
+    next
+  }
+
+  mu_L_a  <- drop(pred_L_a$Ys_mean_orig)
+  mu_R_a  <- drop(pred_R_a$Ys_mean_orig)
+  var_L_a <- drop(pred_L_a$Ys_cov_orig)
+  var_R_a <- drop(pred_R_a$Ys_cov_orig)
+
+  tau_a  <- as.numeric(mu_R_a - mu_L_a)
+  se_a   <- sqrt(var_L_a + var_R_a)
+  ci_a   <- tau_a + c(-1.96, 1.96) * se_a
+  pval_a <- 2 * pnorm(-abs(tau_a / se_a))
+
+  result_adj <- tibble(
+    outcome      = outcome,
+    running_var  = runvar,
+    cutoff       = cutoff,
+    model        = "Covariate-adjusted",
+    tau          = tau_a,
+    se           = se_a,
+    ci_lower     = ci_a[1],
+    ci_upper     = ci_a[2],
+    p_value      = pval_a,
+    significant  = pval_a < 0.05
+  )
+  all_results <- append(all_results, list(result_adj))
+}
+
+# combine everything
+comparison <- bind_rows(all_results)
+print(comparison)
+```
+
+
+
+## extension of gp_rdd
+```{r}
+library(dplyr)
+library(tibble)
+
+# ---- extended gp_rdd that accepts covariates --------------------------------
+gp_rdd_cov <- function(X, Y, cut, covs = NULL,
+                       alpha = 0.05,
+                       b = NULL,
+                       trim = FALSE,
+                       trim_k_value = 0.1,
+                       scale = TRUE,
+                       local_bw = 5) {
+  cutpoint_scalar <- cut
+
+  # handle missingness
+  if (!is.null(covs)) {
+    complete_idx <- complete.cases(X, Y, covs)
+    covs <- covs[complete_idx, , drop = FALSE]
+  } else {
+    complete_idx <- complete.cases(X, Y)
+  }
+  X <- as.numeric(X[complete_idx])
+  Y <- as.numeric(Y[complete_idx])
+  if (!is.null(covs)) covs <- covs[complete_idx, , drop = FALSE]
+
+  # split left/right
+  left_idx  <- which(X < cutpoint_scalar)
+  right_idx <- which(X >= cutpoint_scalar)
+
+  X_left  <- X[left_idx]
+  X_right <- X[right_idx]
+  Y_left  <- Y[left_idx]
+  Y_right <- Y[right_idx]
+  covs_left  <- if (!is.null(covs)) covs[left_idx, , drop = FALSE] else NULL
+  covs_right <- if (!is.null(covs)) covs[right_idx, , drop = FALSE] else NULL
+
+  # trimming logic
+  if (isTRUE(trim) & isTRUE(scale)) {
+    stop("If `trim==TRUE`, scale must be FALSE")
+  }
+  if (isTRUE(trim)) {
+    b_left <- getb_maxvar(X_left)
+    b_right <- getb_maxvar(X_right)
+
+    trim_at_left  <- cutpoint_scalar - sqrt(-1 * b_left * log(trim_k_value))
+    trim_at_right <- cutpoint_scalar + sqrt(-1 * b_right * log(trim_k_value))
+
+    keep_left  <- X_left > trim_at_left
+    keep_right <- X_right < trim_at_right
+
+    X_left  <- X_left[keep_left]
+    Y_left  <- Y_left[keep_left]
+    if (!is.null(covs_left)) covs_left <- covs_left[keep_left, , drop = FALSE]
+
+    X_right <- X_right[keep_right]
+    Y_right <- Y_right[keep_right]
+    if (!is.null(covs_right)) covs_right <- covs_right[keep_right, , drop = FALSE]
+  } else {
+    b_left  <- b
+    b_right <- b
+  }
+
+  # construct training design matrices
+  build_X_mat <- function(x_vec, cov_df) {
+    if (is.null(cov_df)) {
+      matrix(x_vec, ncol = 1, dimnames = list(NULL, "X"))
+    } else {
+      as.matrix(cbind(X = x_vec, cov_df))
+    }
+  }
+  Xmat_left  <- build_X_mat(X_left, covs_left)
+  Xmat_right <- build_X_mat(X_right, covs_right)
+
+  # fit GPs (optimize=TRUE to mirror original)
+  gp_train_l <- gp_train(X = Xmat_left, Y = Y_left, b = b_left, scale = scale, optimize = TRUE)
+  gp_train_r <- gp_train(X = Xmat_right, Y = Y_right, b = b_right, scale = scale, optimize = TRUE)
+
+  # build prediction row matching training design
+  if (!is.null(covs)) {
+    window_idx <- which(X >= (cutpoint_scalar - local_bw) & X <= (cutpoint_scalar + local_bw))
+    if (length(window_idx) == 0) {
+      warning("No observations in local_bw window for covariate profile; using global means instead.")
+      cov_profile <- colMeans(covs, na.rm = TRUE)
+    } else {
+      cov_profile <- colMeans(covs[window_idx, , drop = FALSE], na.rm = TRUE)
+    }
+    pred_df <- as.data.frame(t(c(cutpoint_scalar, cov_profile)))
+    colnames(pred_df) <- colnames(Xmat_left)  # assumes same structure left/right
+  } else {
+    pred_df <- as.data.frame(t(c(cutpoint_scalar)))
+    colnames(pred_df) <- colnames(Xmat_left)  # should be "X"
+    cov_profile <- NULL
+  }
+
+  # predictions
+  gp_pred_l <- gp_predict(gp_train_l, pred_df)
+  gp_pred_r <- gp_predict(gp_train_r, pred_df)
+
+  # treatment effect and uncertainty
+  pred_l <- gp_pred_l$Ys_mean_orig[1]
+  pred_r <- gp_pred_r$Ys_mean_orig[1]
+  tau <- pred_r - pred_l
+  se <- sqrt(diag(gp_pred_l$f_cov_orig)[1] + diag(gp_pred_r$f_cov_orig)[1])
+  ci <- c(lower = tau - qnorm(1 - alpha / 2) * se,
+          upper = tau + qnorm(1 - alpha / 2) * se)
+
+  results <- list(
+    tau = tau, se = se, ci = ci,
+    pred_l = pred_l, pred_r = pred_r,
+    b_left = gp_train_l$b, b_right = gp_train_r$b,
+    s2_left = gp_train_l$s2, s2_right = gp_train_r$s2,
+    n_left = nrow(Xmat_left), n_right = nrow(Xmat_right),
+    trim = trim,
+    covariate_profile = cov_profile,
+    X = X, Y = Y,
+    gp_train_l = gp_train_l,
+    gp_train_r = gp_train_r,
+    cut = cutpoint_scalar
+  )
+
+  if (isTRUE(trim)) {
+    results <- append(results, c(trim_at_left = trim_at_left, trim_at_right = trim_at_right))
+  }
+  return(results)
+}
+
+# ---- prepare covariates --------------------------------------------------
+covariates <- df_clean %>%
+  mutate(
+    Charter = as.numeric(trimws(Charter.School) == "Yes"),
+    DASS    = as.numeric(trimws(DASS) == "Yes")
+  ) %>%
+  select(Charter, DASS, pct_hispanic, pct_white, pct_two_or_more)
+
+
+```
+
+
+
+```{r}
+library(dplyr)
+library(tibble)
+
+# ---- fixed gp_rdd_cov that handles complete.cases correctly ----------
+gp_rdd_cov <- function(X, Y, cut, covs = NULL,
+                       alpha = 0.05,
+                       b = NULL,
+                       trim = FALSE,
+                       trim_k_value = 0.1,
+                       scale = TRUE,
+                       local_bw = 5) {
+  cutpoint_scalar <- cut
+
+  # proper missingness handling: align X, Y, and covs
+  if (!is.null(covs)) {
+    temp_all <- as.data.frame(cbind(X = X, Y = Y, covs))
+    complete_idx <- complete.cases(temp_all)
+    X <- as.numeric(X[complete_idx])
+    Y <- as.numeric(Y[complete_idx])
+    covs <- covs[complete_idx, , drop = FALSE]
+  } else {
+    complete_idx <- complete.cases(X, Y)
+    X <- as.numeric(X[complete_idx])
+    Y <- as.numeric(Y[complete_idx])
+  }
+
+  # split left/right
+  left_idx  <- which(X < cutpoint_scalar)
+  right_idx <- which(X >= cutpoint_scalar)
+
+  X_left  <- X[left_idx]
+  X_right <- X[right_idx]
+  Y_left  <- Y[left_idx]
+  Y_right <- Y[right_idx]
+  covs_left  <- if (!is.null(covs)) covs[left_idx, , drop = FALSE] else NULL
+  covs_right <- if (!is.null(covs)) covs[right_idx, , drop = FALSE] else NULL
+
+  # trimming logic
+  if (isTRUE(trim) & isTRUE(scale)) {
+    stop("If `trim==TRUE`, scale must be FALSE")
+  }
+  if (isTRUE(trim)) {
+    b_left <- getb_maxvar(X_left)
+    b_right <- getb_maxvar(X_right)
+
+    trim_at_left  <- cutpoint_scalar - sqrt(-1 * b_left * log(trim_k_value))
+    trim_at_right <- cutpoint_scalar + sqrt(-1 * b_right * log(trim_k_value))
+
+    keep_left  <- X_left > trim_at_left
+    keep_right <- X_right < trim_at_right
+
+    X_left  <- X_left[keep_left]
+    Y_left  <- Y_left[keep_left]
+    if (!is.null(covs_left)) covs_left <- covs_left[keep_left, , drop = FALSE]
+
+    X_right <- X_right[keep_right]
+    Y_right <- Y_right[keep_right]
+    if (!is.null(covs_right)) covs_right <- covs_right[keep_right, , drop = FALSE]
+  } else {
+    b_left  <- b
+    b_right <- b
+  }
+
+  # construct design matrices
+  build_X_mat <- function(x_vec, cov_df) {
+    if (is.null(cov_df)) {
+      matrix(x_vec, ncol = 1, dimnames = list(NULL, "X"))
+    } else {
+      as.matrix(cbind(X = x_vec, cov_df))
+    }
+  }
+  Xmat_left  <- build_X_mat(X_left, covs_left)
+  Xmat_right <- build_X_mat(X_right, covs_right)
+
+  # fit GPs
+  gp_train_l <- gp_train(X = Xmat_left, Y = Y_left, b = b_left, scale = scale, optimize = TRUE)
+  gp_train_r <- gp_train(X = Xmat_right, Y = Y_right, b = b_right, scale = scale, optimize = TRUE)
+
+  # build prediction row matching training design
+  if (!is.null(covs)) {
+    window_idx <- which(X >= (cutpoint_scalar - local_bw) & X <= (cutpoint_scalar + local_bw))
+    if (length(window_idx) == 0) {
+      warning("No observations in local_bw window for covariate profile; using global means instead.")
+      cov_profile <- colMeans(covs, na.rm = TRUE)
+    } else {
+      cov_profile <- colMeans(covs[window_idx, , drop = FALSE], na.rm = TRUE)
+    }
+    pred_df <- as.data.frame(t(c(cutpoint_scalar, cov_profile)))
+    colnames(pred_df) <- colnames(Xmat_left)
+  } else {
+    pred_df <- as.data.frame(t(c(cutpoint_scalar)))
+    colnames(pred_df) <- colnames(Xmat_left)
+    cov_profile <- NULL
+  }
+
+  # predictions
+  gp_pred_l <- gp_predict(gp_train_l, pred_df)
+  gp_pred_r <- gp_predict(gp_train_r, pred_df)
+
+  # effect and uncertainty
+  pred_l <- gp_pred_l$Ys_mean_orig[1]
+  pred_r <- gp_pred_r$Ys_mean_orig[1]
+  tau <- pred_r - pred_l
+  se <- sqrt(diag(gp_pred_l$f_cov_orig)[1] + diag(gp_pred_r$f_cov_orig)[1])
+  ci <- c(lower = tau - qnorm(1 - alpha / 2) * se,
+          upper = tau + qnorm(1 - alpha / 2) * se)
+
+  results <- list(
+    tau = tau, se = se, ci = ci,
+    pred_l = pred_l, pred_r = pred_r,
+    b_left = gp_train_l$b, b_right = gp_train_r$b,
+    s2_left = gp_train_l$s2, s2_right = gp_train_r$s2,
+    n_left = nrow(Xmat_left), n_right = nrow(Xmat_right),
+    trim = trim,
+    covariate_profile = cov_profile,
+    X = X, Y = Y,
+    gp_train_l = gp_train_l,
+    gp_train_r = gp_train_r,
+    cut = cutpoint_scalar
+  )
+
+  if (isTRUE(trim)) {
+    results <- append(results, c(trim_at_left = trim_at_left, trim_at_right = trim_at_right))
+  }
+  return(results)
+}
+
+# ---- templated runner --------------------------------------------------
+run_rdd_comparisons <- function(df, running_variable, cutoff, outcomes, covariate_names = c("Charter", "DASS", "pct_hispanic", "pct_white", "pct_two_or_more"), local_bw = 5) {
+  # prepare covariates once
+  covs_df <- df %>%
+    mutate(
+      Charter = as.numeric(trimws(Charter.School) == "Yes"),
+      DASS    = as.numeric(trimws(DASS) == "Yes")
+    ) %>%
+    select(all_of(covariate_names))
+
+  results <- vector("list", length(outcomes) * 3)
+  i <- 1L
+
+  for (outcome in outcomes) {
+    X <- df[[running_variable]]
+    Y <- df[[outcome]]
+
+    # 1. gp_rdd unadjusted
+    rdd_res <- gp_rdd(X, Y, cutoff, trim = FALSE, scale = TRUE)
+    tau_rdd <- rdd_res$tau
+    se_rdd  <- rdd_res$se
+    ci_lo_rdd <- rdd_res$ci[1]
+    ci_hi_rdd <- rdd_res$ci[2]
+    pval_rdd <- 2 * pnorm(-abs(tau_rdd / se_rdd))
+    sig_rdd  <- pval_rdd < 0.05
+
+    results[[i]] <- tibble(
+      outcome     = outcome,
+      running_variable = running_variable,
+      cutoff      = cutoff,
+      model       = "gp_rdd",
+      tau         = tau_rdd,
+      se          = se_rdd,
+      ci_lower    = ci_lo_rdd,
+      ci_upper    = ci_hi_rdd,
+      p_value     = pval_rdd,
+      significant = sig_rdd
+    )
+    i <- i + 1L
+
+    # 2. gp_rdd_cov unadjusted
+    rdd_cov_unadj <- gp_rdd_cov(X = X, Y = Y, cut = cutoff, covs = NULL, trim = FALSE, scale = TRUE, local_bw = local_bw)
+    tau_cov_unadj <- rdd_cov_unadj$tau
+    se_cov_unadj  <- rdd_cov_unadj$se
+    ci_lo_cov_unadj <- rdd_cov_unadj$ci["lower"]
+    ci_hi_cov_unadj <- rdd_cov_unadj$ci["upper"]
+    pval_cov_unadj <- 2 * pnorm(-abs(tau_cov_unadj / se_cov_unadj))
+    sig_cov_unadj  <- pval_cov_unadj < 0.05
+
+    results[[i]] <- tibble(
+      outcome     = outcome,
+      running_variable = running_variable,
+      cutoff      = cutoff,
+      model       = "gp_rdd_cov (no covs)",
+      tau         = tau_cov_unadj,
+      se          = se_cov_unadj,
+      ci_lower    = ci_lo_cov_unadj,
+      ci_upper    = ci_hi_cov_unadj,
+      p_value     = pval_cov_unadj,
+      significant = sig_cov_unadj
+    )
+    i <- i + 1L
+
+    # 3. gp_rdd_cov with covariate adjustment
+    rdd_cov_adj <- gp_rdd_cov(X = X, Y = Y, cut = cutoff, covs = covs_df, trim = FALSE, scale = TRUE, local_bw = local_bw)
+    tau_cov_adj <- rdd_cov_adj$tau
+    se_cov_adj  <- rdd_cov_adj$se
+    ci_lo_cov_adj <- rdd_cov_adj$ci["lower"]
+    ci_hi_cov_adj <- rdd_cov_adj$ci["upper"]
+    pval_cov_adj <- 2 * pnorm(-abs(tau_cov_adj / se_cov_adj))
+    sig_cov_adj  <- pval_cov_adj < 0.05
+
+    results[[i]] <- tibble(
+      outcome     = outcome,
+      running_variable = running_variable,
+      cutoff      = cutoff,
+      model       = "gp_rdd_cov (covariate-adjusted)",
+      tau         = tau_cov_adj,
+      se          = se_cov_adj,
+      ci_lower    = ci_lo_cov_adj,
+      ci_upper    = ci_hi_cov_adj,
+      p_value     = pval_cov_adj,
+      significant = sig_cov_adj
+    )
+    i <- i + 1L
+  }
+
+  bind_rows(results)
+}
+```
+
+## FRPM 35%
+```{r}
+# ---- Usage FRPM 35%  ------------------------------------------------------
+outcomes <- c(
+  "chronic_absenteeism",
+  "btb",
+  "avg_pct_met_above_ELA",
+  "avg_pct_met_above_Math",
+  "avg_pct_not_met_ELA",
+  "avg_pct_not_met_Math",
+  "avg_scale_score_ELA",
+  "avg_scale_score_Math"
+)
+frpm_gp_rdd_35_comparison_table <- run_rdd_comparisons(
+  df = df_clean,
+  running_variable = "frpm_percent",
+  cutoff = 35,
+  outcomes = outcomes,
+  covariate_names = c("Charter", "DASS", "pct_hispanic", "pct_white", "pct_two_or_more"),
+  local_bw = 5
+)
+
+print(frpm_gp_rdd_35_comparison_table)
+```
+
+
+## FRPM 75%
+```{r}
+# ---- Usage FRPM 35%  ------------------------------------------------------
+outcomes <- c(
+  "chronic_absenteeism",
+  "btb",
+  "avg_pct_met_above_ELA",
+  "avg_pct_met_above_Math",
+  "avg_pct_not_met_ELA",
+  "avg_pct_not_met_Math",
+  "avg_scale_score_ELA",
+  "avg_scale_score_Math"
+)
+
+frpm_gp_rdd_75_comparison_table <- run_rdd_comparisons(
+  df = df_clean,
+  running_variable = "frpm_percent",
+  cutoff = 75,
+  outcomes = outcomes,
+  covariate_names = c("Charter", "DASS", "pct_hispanic", "pct_white", "pct_two_or_more"),
+  local_bw = 5
+)
+
+print(frpm_gp_rdd_75_comparison_table)
+```
+
+## Unduplicate Peer Percent 40%
+```{r}
+# ---- Usage FRPM 35%  ------------------------------------------------------
+outcomes <- c(
+  "chronic_absenteeism",
+  "btb",
+  "avg_pct_met_above_ELA",
+  "avg_pct_met_above_Math",
+  "avg_pct_not_met_ELA",
+  "avg_pct_not_met_Math",
+  "avg_scale_score_ELA",
+  "avg_scale_score_Math"
+)
+
+upp_gp_rdd_40_comparison_table <- run_rdd_comparisons(
+  df = df_clean,
+  running_variable = "undup_pct",
+  cutoff = 40,
+  outcomes = outcomes,
+  covariate_names = c("Charter", "DASS", "pct_hispanic", "pct_white", "pct_two_or_more"),
+  local_bw = 5
+)
+
+print(upp_gp_rdd_40_comparison_table)
+```
+
+## Unduplicate Peer Percent 75%
+```{r}
+# ---- Usage Unduplicate Peer Percent 75%  ------------------------------------------------------
+outcomes <- c(
+  "chronic_absenteeism",
+  "btb",
+  "avg_pct_met_above_ELA",
+  "avg_pct_met_above_Math",
+  "avg_pct_not_met_ELA",
+  "avg_pct_not_met_Math",
+  "avg_scale_score_ELA",
+  "avg_scale_score_Math"
+)
+
+upp_gp_rdd_75_comparison_table <- run_rdd_comparisons(
+  df = df_clean,
+  running_variable = "undup_pct",
+  cutoff = 75,
+  outcomes = outcomes,
+  covariate_names = c("Charter", "DASS", "pct_hispanic", "pct_white", "pct_two_or_more"),
+  local_bw = 5
+)
+
+print(upp_gp_rdd_75_comparison_table)
+```
+
+Result comparison
+```{r}
+classical_rdd_summary_tbl <- classical_rdd_summary_tbl %>% mutate(model="rdd", significant=p_value<0.05)
+
+complete_results_table_summary <- classical_rdd_summary_tbl %>%
+                                    rbind(frpm_gp_rdd_35_comparison_table) %>%
+                                    rbind(frpm_gp_rdd_75_comparison_table) %>%
+                                    rbind(upp_gp_rdd_40_comparison_table)  %>%
+                                    rbind(upp_gp_rdd_75_comparison_table) %>%
+                                    arrange(outcome, running_variable, cutoff, desc(model))
+complete_results_table_summary
+view(complete_results_table_summary)
+# 2 RVs
+# 2 cutoffs
+# 8 outcomes
+# 4 models
+# 128 total rows
+```

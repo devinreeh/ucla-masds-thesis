@@ -1,0 +1,544 @@
+---
+title: "MAS_Thesis_RD_GP_RDD"
+author: "Devin Reeh"
+date: "2025-07-02"
+output:
+  pdf_document:
+    latex_engine: lualatex
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, echo=FALSE, results='hide', warning=FALSE}
+
+# ──────────────────────────────────────────────────────────────
+#Load packages for gausian processes, then data manipulation
+# ──────────────────────────────────────────────────────────────
+devtools::install_github('doeun-kim/gpss')
+# install.packages(c("readxl", "dplyr", "devtools", "broom"))
+library(gpss)
+library(readxl)
+library(stringr)
+library(ggplot2)
+library(tidyverse)
+library(dplyr)
+library(broom)
+library(readr)
+```
+
+```{r}
+cupc_path <- "~/personal-projects/ucla-masds-thesis/data/cupc2122-k12.xlsx"
+upc_data <- read_excel(cupc_path, sheet="School-Level CALPADS UPC Data", col_names = T, skip = 1)
+colnames(upc_data) <- c(
+  "academic_year",
+  "county_code",
+  "district_code",
+  "school_code",
+  "county_name",
+  "district_name",
+  "school_name",
+  "district_type",
+  "school_type",
+  "educational_option_type",
+  "nslp_provision_status",
+  "charter_school_yn",
+  "charter_number",
+  "charter_funding_type",
+  "irc",
+  "low_grade",
+  "high_grade",
+  "total_enrollment",
+  "frpm_program",
+  "foster",
+  "tribal_foster_youth",
+  "homeless",
+  "migrant_program",
+  "direct_certification",
+  "undup_frpm_eligible_count",
+  "english_learner",
+  "calpads_upc",
+  "calpads_certified_yn"
+)
+glimpse(upc_data)
+```
+
+```{r}
+lausd_cupc <- upc_data %>%
+  filter(
+    academic_year == "2021-2022",
+    district_code == "64733"     # LAUSD county-district prefix
+  ) %>%
+  mutate(
+    undup_pct = 100 * (as.numeric(calpads_upc) / as.numeric(total_enrollment))
+  ) %>%
+    select(
+      school_code,
+      undup_pct
+    )
+
+summary(lausd_cupc$undup_pct)
+
+ggplot(lausd_cupc, aes(x = undup_pct)) +
+  geom_density(fill = "lightblue") +
+  labs(title = "Density of School Unduplicated %", x = "Unduplicated %", y = "Density") +
+  theme_minimal()
+
+```
+
+
+```{r, echo=FALSE, results='hide', warning=FALSE}
+# Download and read the demographic file
+demo_url <- "https://www3.cde.ca.gov/demo-downloads/enrsch/enr202022-v2.txt"
+
+# The file is pipe-delimited with no headers
+demo_raw <- read_delim(demo_url, delim = "\t", col_names = T, show_col_types = FALSE)
+```
+
+```{r, echo=FALSE, results='hide', warning=FALSE}
+
+# ------------------------------
+# Filter to LAUSD, Primary enrollment only
+# ------------------------------
+
+lausd_demo <- demo_raw %>%
+  filter(
+    ACADEMIC_YEAR == "2021-22",
+    ENR_TYPE == "P",                        # Primary enrollment
+    substr(CDS_CODE, 1, 7) == "1964733"     # LAUSD county-district prefix
+  )
+
+# ------------------------------
+# Total enrollment per school
+# ------------------------------
+
+total_enroll <- lausd_demo %>%
+  group_by(CDS_CODE) %>%
+  summarise(total_enroll = sum(ENR_TOTAL, na.rm = TRUE), .groups = "drop")
+
+# ------------------------------
+# Step 4: Enrollment by ethnicity
+# RACE_ETHNICITY codes:
+# 0 = Not reported
+# 1 = American Indian
+# 2 = Asian
+# 3 = Pacific Islander
+# 4 = Filipino
+# 5 = Hispanic/Latino
+# 6 = Black/African American
+# 7 = White
+# 9 = Two or more races
+# ------------------------------
+
+race_counts <- lausd_demo %>%
+  group_by(CDS_CODE, RACE_ETHNICITY) %>%
+  summarise(race_enroll = sum(ENR_TOTAL, na.rm = TRUE), .groups = "drop") %>%
+  pivot_wider(
+    names_from = RACE_ETHNICITY,
+    values_from = race_enroll,
+    names_prefix = "ethnic_",
+    values_fill = 0
+  )
+
+# ------------------------------
+# Compute percentages
+# ------------------------------
+
+race_pct <- race_counts %>%
+  left_join(total_enroll, by = "CDS_CODE") %>%
+  mutate(
+    school_code       = substr(CDS_CODE, 8, 14),
+    pct_hispanic      = 100 * ethnic_5 / total_enroll,
+    pct_black         = 100 * ethnic_6 / total_enroll,
+    pct_white         = 100 * ethnic_7 / total_enroll,
+    pct_asian         = 100 * ethnic_2 / total_enroll,
+    pct_two_or_more   = 100 * ethnic_9 / total_enroll,
+    pct_other         = 100 * (ethnic_0 + ethnic_1 + ethnic_3 + ethnic_4) / total_enroll
+  ) %>%
+  select(
+    school_code,
+    total_enroll,
+    pct_hispanic,
+    pct_black,
+    pct_white,
+    pct_asian,
+    pct_two_or_more,
+    pct_other
+  )
+
+
+```
+
+```{r, echo=FALSE, results='hide', warning=FALSE}
+# ──────────────────────────────────────────────────────────────
+# FRPM 2021-22  →  frpm_lausd (clean names)
+# ──────────────────────────────────────────────────────────────
+frpm_path <- "~/Downloads/frpm2122_v2.xlsx"
+
+# If the FRPM sheet name is uncertain, take the 2nd sheet (adjust if needed)
+frpm_raw <- read_excel(frpm_path, sheet = 2, skip = 1)
+
+# Explicit column rename vector  (index order must match colnames(frpm_raw))
+names(frpm_raw) <- c(
+  "academic_year",
+  "county_code",
+  "district_code",
+  "school_code",
+  "county_name",
+  "district_name",
+  "school_name",
+  "district_type",
+  "school_type",
+  "educational_option_type",
+  "nslp_provision_status",
+  "charter_school_yn",
+  "charter_school_number",
+  "charter_funding_type",
+  "irc",
+  "low_grade",
+  "high_grade",
+  "enrollment_k_12",
+  "free_meal_count_k_12",
+  "percent_eligible_free_k_12",
+  "frpm_count_k_12",
+  "percent_eligible_frpm_k_12",
+  "enrollment_5_17",
+  "free_meal_count_5_17",
+  "percent_eligible_free_5_17",
+  "frpm_count_5_17",
+  "frpm_rate",                      # running variable
+  "calpads_cert_status"
+)
+
+frpm_lausd <- frpm_raw %>%
+  filter(district_name == "Los Angeles Unified") %>%
+  select(school_name, school_code, frpm_rate) %>%
+  mutate(
+    school_name = toupper(trimws(school_name)),
+    frpm_rate   = as.numeric(frpm_rate),
+    schoolcode = str_pad(as.character(school_code), width = 7, pad = "0")
+  )
+
+# ──────────────────────────────────────────────────────────────
+# Chronic Absenteeism TXT  →  attendance_lausd
+# ──────────────────────────────────────────────────────────────
+att_path <- "~/Downloads/chronicabsenteeism22-v3.txt"
+
+att_raw <- read.delim(att_path, sep = "\t", quote = "\"", stringsAsFactors = FALSE)
+
+# Minimal rename for needed columns
+names(att_raw)[ names(att_raw) == "District.Name"            ] <- "district_name"
+names(att_raw)[ names(att_raw) == "School.Name"              ] <- "school_name"
+names(att_raw)[ names(att_raw) == "School.Code"              ] <- "school_code"
+names(att_raw)[ names(att_raw) == "ChronicAbsenteeismRate"   ] <- "chronic_absenteeism"
+
+
+attendance_lausd <- att_raw %>%
+  filter(district_name == "Los Angeles Unified", Reporting.Category == "TA") %>%
+  mutate(
+    school_code = str_pad(as.character(school_code), width = 7, pad = "0"),
+    chronic_absenteeism  = as.numeric(na_if(chronic_absenteeism, '*')),
+    ChronicAbsenteeismEligibleCumulativeEnrollment = as.numeric(na_if(ChronicAbsenteeismEligibleCumulativeEnrollment, '*')),
+    ChronicAbsenteeismCount = as.numeric(na_if(ChronicAbsenteeismCount, '*')),
+  )
+
+# ──────────────────────────────────────────────────────────────
+# 3.  Merge  +  create RDD vars
+# ──────────────────────────────────────────────────────────────
+merged <- inner_join(frpm_lausd, attendance_lausd, by = "school_code") %>%
+  mutate(
+    treated = ifelse(frpm_rate >= 0.75, 1, 0),
+    running = frpm_rate - 0.75
+  )
+
+# ──────────────────────────────────────────────────────────────
+# 4.  Beyond-the-Bell  →  add btb_participation
+# ──────────────────────────────────────────────────────────────
+btb_path <- "~/Downloads/BeyondTheBellSchoolSitePrograms-20212022 copy.csv"
+btb_raw  <- read.csv(btb_path, stringsAsFactors = FALSE)
+
+# Rename the single column we need
+names(btb_raw)[ names(btb_raw) == "School" ] <- "school_name"
+
+
+btb_clean <- btb_raw %>%
+  mutate(
+    btb_am = ifelse(is.na(BeforeSchoolGrantProgram), 0, 1),
+    btb_pm = ifelse(is.na(AfterSchoolGeneralFundedPrograms) | is.na(AfterSchoolGrantProgram), 0, 1),
+    CDSCode = as.character(CDSCode),
+    school_code = str_sub(CDSCode, -7)
+  )
+
+btb_unique <- btb_clean %>%
+  group_by(school_code) %>%
+  summarise(
+    SchoolYear = first(SchoolYear),  # or customize how you want to handle it
+    BeforeSchoolGrantProgram = as.integer(any(!is.na(BeforeSchoolGrantProgram))),
+    AfterSchoolGeneralFundedPrograms = as.integer(any(!is.na(AfterSchoolGeneralFundedPrograms))),
+    btb_participation = ifelse(BeforeSchoolGrantProgram || AfterSchoolGeneralFundedPrograms, 1, 0)
+  )
+
+merged <- merged %>%
+  left_join(race_pct, by = "school_code") %>%
+  left_join(lausd_cupc, by="school_code") %>%
+  left_join(btb_unique, by = "school_code")
+
+df_clean <- merged %>%
+  filter(!is.na(chronic_absenteeism)) %>%  # remove rows with missing outcome
+  mutate(
+    frpm_percent = frpm_rate * 100,
+    food_eligible = if_else(frpm_percent >= 60, 1, 0),  # CEP cutoff
+    btb = if_else(is.na(btb_participation), 0L, as.integer(btb_participation > 0)),
+    county = as.factor(County.Code),
+    district = as.factor(District.Code)
+  )
+
+glimpse(df_clean)
+```
+
+# Data Summmary
+```{r}
+glimpse(df_clean)
+```
+
+
+# RDD chronic_abseentism ~ FRPM % - 40 cut off
+```{r}
+######################################################
+# GP RDD
+# chronic_abseentism ~ FRPM % - 40 cut off
+######################################################
+rdd_res_absenteeism_frpm_40_cutoff <- gp_rdd(
+  df_clean$frpm_percent,
+  df_clean$chronic_absenteeism,
+  40
+)
+rdd_res_absenteeism_frpm_40_cutoff$tau     # estimated effect
+rdd_res_absenteeism_frpm_40_cutoff$se      # standard error
+rdd_res_absenteeism_frpm_40_cutoff$ci      # confidence interval
+rdd_result_plot_1 <- gp_rdd_plot(rdd_res_absenteeism_frpm_40_cutoff) +
+  geom_vline(xintercept = 40, linetype = "dashed") +
+  coord_cartesian(xlim = c(20, 60)) +
+  labs(title = "Zoomed-In View Around the Cutoff")
+print(rdd_result_plot_1)
+
+```
+
+# GP RDD - chronic_abseentism ~ FRPM % - 75 cut off
+```{r}
+######################################################
+# GP RDD
+# chronic_abseentism ~ FRPM % - 75 cut off
+######################################################
+# Example using formula interface:
+rdd_res_absenteeism_frpm_75_cutoff <- gp_rdd(
+  df_clean$frpm_percent,
+  df_clean$chronic_absenteeism,
+  75
+)
+rdd_res_absenteeism_frpm_75_cutoff$tau     # estimated effect
+rdd_res_absenteeism_frpm_75_cutoff$se      # standard error
+rdd_res_absenteeism_frpm_75_cutoff$ci      # confidence interval
+rdd_result_plot_2 <- gp_rdd_plot(rdd_res_absenteeism_frpm_75_cutoff) +
+  geom_vline(xintercept = 40, linetype = "dashed") +
+  coord_cartesian(xlim = c(20, 60)) +
+  labs(title = "Zoomed-In View Around the Cutoff")
+print(rdd_result_plot_2)
+```
+
+
+# GP RDD BTB ~ FRPM % - 40 cut off
+```{r}
+######################################################
+# GP RDD
+# BTB ~ FRPM % - 40 cut off
+######################################################
+rdd_res_absenteeism_BTB_40_cutoff <- gp_rdd(
+  df_clean$frpm_percent,
+  df_clean$btb,
+  40
+)
+rdd_res_absenteeism_BTB_40_cutoff$tau     # estimated effect
+rdd_res_absenteeism_BTB_40_cutoff$se      # standard error
+rdd_res_absenteeism_BTB_40_cutoff$ci      # confidence interval
+rdd_result_plot_3 <- gp_rdd_plot(rdd_res_absenteeism_BTB_40_cutoff) +
+  geom_vline(xintercept = 40, linetype = "dashed") +
+  coord_cartesian(xlim = c(20, 60)) +
+  labs(title = "Zoomed-In View Around the Cutoff")
+print(rdd_result_plot_3)
+
+```
+
+# GP RDD BTB ~ FRPM % - 75 cut off
+```{r}
+######################################################
+# GP RDD
+# BTB ~ FRPM % - 75 cut off
+######################################################
+rdd_res_absenteeism_BTB_75_cutoff <- gp_rdd(
+  df_clean$frpm_percent,
+  df_clean$btb,
+  75
+)
+rdd_res_absenteeism_BTB_75_cutoff$tau     # estimated effect
+rdd_res_absenteeism_BTB_75_cutoff$se      # standard error
+rdd_res_absenteeism_BTB_75_cutoff$ci      # confidence interval
+rdd_result_plot_4 <- gp_rdd_plot(rdd_res_absenteeism_BTB_75_cutoff) +
+                      geom_vline(xintercept = 40, linetype = "dashed") +
+                      coord_cartesian(xlim = c(20, 60)) +
+                      labs(title = "Zoomed-In View Around the Cutoff")
+print(rdd_result_plot_4)
+```
+
+# Balance Tests with Xs
+```{r}
+library(dplyr)
+library(tidyr)
+
+# ──────────────────────────────────────────────
+# Balance tests for continuous covariates
+# ──────────────────────────────────────────────
+run_continuous_balance_tests <- function(df, cutoff = 0.75, bandwidth = 0.1) {
+  df_band <- df %>%
+    filter(frpm_rate >= (cutoff - bandwidth), frpm_rate <= (cutoff + bandwidth)) %>%
+    mutate(
+      treated = as.factor(if_else(frpm_rate >= cutoff, 1, 0))
+    )
+
+  covariates <- c(
+    "pct_hispanic", "pct_black", "pct_white", "pct_asian",
+    "pct_two_or_more", "pct_other", "total_enroll"
+  )
+
+  results <- lapply(covariates, function(var) {
+    if (nlevels(df_band$treated) == 2) {
+      formula <- as.formula(paste(var, "~ treated"))
+      test <- t.test(formula, data = df_band)
+      tibble(
+        variable = var,
+        test_type = "t-test",
+        p_value = test$p.value,
+        mean_treated = mean(df_band[[var]][df_band$treated == "1"], na.rm = TRUE),
+        mean_control = mean(df_band[[var]][df_band$treated == "0"], na.rm = TRUE)
+      )
+    } else {
+      tibble(
+        variable = var,
+        test_type = "t-test",
+        p_value = NA,
+        mean_treated = NA,
+        mean_control = NA
+      )
+    }
+  })
+
+  bind_rows(results)
+}
+
+# ──────────────────────────────────────────────
+#  Balance tests for binary categorical covariates
+# ──────────────────────────────────────────────
+run_binary_balance_tests <- function(df, cutoff = 0.75, bandwidth = 0.1) {
+  df_band <- df %>%
+    filter(frpm_rate >= (cutoff - bandwidth), frpm_rate <= (cutoff + bandwidth)) %>%
+    mutate(
+      treated = as.factor(if_else(frpm_rate >= cutoff, 1, 0)),
+      DASS = factor(trimws(DASS)),
+      Charter = factor(trimws(Charter.School))
+    )
+
+  results <- list()
+
+  for (var in c("DASS", "Charter")) {
+    tab <- table(df_band[[var]], df_band$treated)
+
+    if (nrow(tab) > 1 && ncol(tab) > 1) {
+      test <- chisq.test(tab)
+      result <- tibble(
+        variable = var,
+        test_type = "chi-squared",
+        p_value = test$p.value,
+        prop_treated = round(100 * prop.table(tab, 2)[, "1"], 1),
+        prop_control = round(100 * prop.table(tab, 2)[, "0"], 1)
+      )
+    } else {
+      result <- tibble(
+        variable = var,
+        test_type = "chi-squared",
+        p_value = NA,
+        prop_treated = NA,
+        prop_control = NA
+      )
+    }
+
+    results[[var]] <- result
+  }
+
+  bind_rows(results)
+}
+
+# ──────────────────────────────────────────────
+# Tests at both cutoffs
+# ──────────────────────────────────────────────
+
+# For 75% cutoff
+balance_75_cont <- run_continuous_balance_tests(df_clean, cutoff = 0.75)
+balance_75_cat  <- run_binary_balance_tests(df_clean, cutoff = 0.75)
+balance_75 <- bind_rows(balance_75_cont, balance_75_cat)
+
+# For 40% cutoff
+balance_40_cont <- run_continuous_balance_tests(df_clean, cutoff = 0.40)
+balance_40_cat  <- run_binary_balance_tests(df_clean, cutoff = 0.40)
+balance_40 <- bind_rows(balance_40_cont, balance_40_cat)
+
+# ──────────────────────────────────────────────
+# Results
+# ──────────────────────────────────────────────
+print("Balance tests around 75% cutoff:")
+print(balance_75)
+
+print("Balance tests around 40% cutoff:")
+print(balance_40)
+
+
+# Optional: write to CSV
+# write.csv(balance_75, "balance_test_75.csv", row.names = FALSE)
+# write.csv(balance_40, "balance_test_40.csv", row.names = FALSE)
+
+
+```
+
+# Covariate-Adjusted RD $𝑌∼𝐷∣𝑋$
+
+```{r}
+df_clean %>%
+  summarise(
+    charter_n  = n_distinct(Charter.School),
+    dass_n     = n_distinct(DASS),
+    county_n   = n_distinct(County.Code),
+    district_n = n_distinct(District.Code)
+  )
+
+# Convert categorical covariates to factors
+df_clean <- df_clean %>%
+  mutate(across(
+    c(Charter.School, DASS),
+    ~ as.factor(trimws(.x))
+  ))
+
+# GP-RDD with covariate adjustment (demographic variables that showed imbalance)
+model_y_adj <- gpss(
+  formula = chronic_absenteeism ~ treated + running +
+    Charter.School + DASS +
+    pct_hispanic + pct_white + pct_two_or_more,
+  data = df_clean
+)
+
+# Summary output
+summary(model_y_adj)
+
+
+```
+

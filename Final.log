@@ -1,0 +1,1602 @@
+This is LuaHBTeX, Version 1.18.0 (TeX Live 2024)  (format=lualatex 2025.7.9)  16 JUL 2025 11:06
+ restricted system commands enabled.
+**Final.tex
+(./Final.tex
+LaTeX2e <2023-11-01> patch level 1
+L3 programming layer <2024-05-08>
+Lua module: luaotfload 2024-02-14 3.28 Lua based OpenType font support
+Lua module: lualibs 2023-07-13 2.76 ConTeXt Lua standard libraries.
+Lua module: lualibs-extended 2023-07-13 2.76 ConTeXt Lua libraries -- extended collection.
+luaotfload | conf : Root cache directory is "/Users/devinreeh/Library/TinyTeX/texmf-var/luatex-cache/generic/names".
+luaotfload | init : Loading fontloader "fontloader-2023-12-28.lua" from kpse-resolved path "/Users/devinreeh/Library/TinyTeX/texmf-dist/tex/luatex/luaotfload/fontloader-2023-12-28.lua".
+Lua-only attribute luaotfload@noligature = 1
+luaotfload | init : Context OpenType loader version 3.134
+Inserting `luaotfload.node_processor' in `pre_linebreak_filter'.
+Inserting `luaotfload.node_processor' in `hpack_filter'.
+Inserting `luaotfload.glyph_stream' in `glyph_stream_provider'.
+Inserting `luaotfload.define_font' in `define_font'.
+Lua-only attribute luaotfload_color_attribute = 2
+luaotfload | conf : Root cache directory is "/Users/devinreeh/Library/TinyTeX/texmf-var/luatex-cache/generic/names".
+Inserting `luaotfload.harf.strip_prefix' in `find_opentype_file'.
+Inserting `luaotfload.harf.strip_prefix' in `find_truetype_file'.
+Removing  `luaotfload.glyph_stream' from `glyph_stream_provider'.
+Inserting `luaotfload.harf.glyphstream' in `glyph_stream_provider'.
+Inserting `luaotfload.harf.finalize_vlist' in `post_linebreak_filter'.
+Inserting `luaotfload.harf.finalize_hlist' in `hpack_filter'.
+Inserting `luaotfload.cleanup_files' in `wrapup_run'.
+Inserting `luaotfload.harf.finalize_unicode' in `finish_pdffile'.
+Inserting `luaotfload.glyphinfo' in `glyph_info'.
+Lua-only attribute luaotfload.letterspace_done = 3
+Inserting `luaotfload.aux.set_sscale_dimens' in `luaotfload.patch_font'.
+Inserting `luaotfload.aux.set_font_index' in `luaotfload.patch_font'.
+Inserting `luaotfload.aux.patch_cambria_domh' in `luaotfload.patch_font'.
+Inserting `luaotfload.aux.fixup_fontdata' in `luaotfload.patch_font_unsafe'.
+Inserting `luaotfload.aux.set_capheight' in `luaotfload.patch_font'.
+Inserting `luaotfload.aux.set_xheight' in `luaotfload.patch_font'.
+Inserting `luaotfload.rewrite_fontname' in `luaotfload.patch_font'.
+Inserting `tracingstacklevels' in `input_level_string'. (/Users/devinreeh/Library/TinyTeX/texmf-dist/tex/latex/base/article.cls
+Document Class: article 2023/05/17 v1.4n Standard LaTeX document class
+(/Users/devinreeh/Library/TinyTeX/texmf-dist/tex/latex/base/size10.clo
+File: size10.clo 2023/05/17 v1.4n Standard LaTeX file (size option)
+luaotfload | db : Font names database loaded from /Users/devinreeh/Library/TinyTeX/texmf-var/luatex-cache/generic/names/luaotfload-names.luc.gz)
+\c@part=\count187
+\c@section=\count188
+\c@subsection=\count189
+\c@subsubsection=\count190
+\c@paragraph=\count191
+\c@subparagraph=\count192
+\c@figure=\count193
+\c@table=\count194
+\abovecaptionskip=\skip48
+\belowcaptionskip=\skip49
+\bibindent=\dimen139
+) (/Users/devinreeh/Library/TinyTeX/texmf-dist/tex/latex/amsmath/amsmath.sty
+Package: amsmath 2023/05/13 v2.17o AMS math features
+\@mathmargin=\skip50
+For additional information on amsmath, use the `?' option.
+(/Users/devinreeh/Library/TinyTeX/texmf-dist/tex/latex/amsmath/amstext.sty
+Package: amstext 2021/08/26 v2.01 AMS text
+(/Users/devinreeh/Library/TinyTeX/texmf-dist/tex/latex/amsmath/amsgen.sty
+File: amsgen.sty 1999/11/30 v2.0 generic functions
+\@emptytoks=\toks17
+\ex@=\dimen140
+)) (/Users/devinreeh/Library/TinyTeX/texmf-dist/tex/latex/amsmath/amsbsy.sty
+Package: amsbsy 1999/11/29 v1.2d Bold Symbols
+\pmbraise@=\dimen141
+) (/Users/devinreeh/Library/TinyTeX/texmf-dist/tex/latex/amsmath/amsopn.sty
+Package: amsopn 2022/04/08 v2.04 operator names
+)
+\inf@bad=\count195
+LaTeX Info: Redefining \frac on input line 236.
+\uproot@=\count196
+\leftroot@=\count197
+LaTeX Info: Redefining \overline on input line 399.
+LaTeX Info: Redefining \colon on input line 410.
+\classnum@=\count198
+\DOTSCASE@=\count199
+LaTeX Info: Redefining \ldots on input line 496.
+LaTeX Info: Redefining \dots on input line 499.
+LaTeX Info: Redefining \cdots on input line 620.
+\Mathstrutbox@=\box51
+\strutbox@=\box52
+LaTeX Info: Redefining \big on input line 722.
+LaTeX Info: Redefining \Big on input line 723.
+LaTeX Info: Redefining \bigg on input line 724.
+LaTeX Info: Redefining \Bigg on input line 725.
+\big@size=\dimen142
+LaTeX Font Info:    Redeclaring font encoding OML on input line 743.
+LaTeX Font Info:    Redeclaring font encoding OMS on input line 744.
+\macc@depth=\count266
+LaTeX Info: Redefining \bmod on input line 905.
+LaTeX Info: Redefining \pmod on input line 910.
+LaTeX Info: Redefining \smash on input line 940.
+LaTeX Info: Redefining \relbar on input line 970.
+LaTeX Info: Redefining \Relbar on input line 971.
+\c@MaxMatrixCols=\count267
+\dotsspace@=\muskip16
+\c@parentequation=\count268
+\dspbrk@lvl=\count269
+\tag@help=\toks18
+\row@=\count270
+\column@=\count271
+\maxfields@=\count272
+\andhelp@=\toks19
+\eqnshift@=\dimen143
+\alignsep@=\dimen144
+\tagshift@=\dimen145
+\tagwidth@=\dimen146
+\totwidth@=\dimen147
+\lineht@=\dimen148
+\@envbody=\toks20
+\multlinegap=\skip51
+\multlinetaggap=\skip52
+\mathdisplay@stack=\toks21
+LaTeX Info: Redefining \[ on input line 2953.
+LaTeX Info: Redefining \] on input line 2954.
+) (/Users/devinreeh/Library/TinyTeX/texmf-dist/tex/latex/amsfonts/amssymb.sty
+Package: amssymb 2013/01/14 v3.01 AMS font symbols
+(/Users/devinreeh/Library/TinyTeX/texmf-dist/tex/latex/amsfonts/amsfonts.sty
+Package: amsfonts 2013/01/14 v3.01 Basic AMSFonts support
+\symAMSa=\mathgroup4
+\symAMSb=\mathgroup5
+LaTeX Font Info:    Redeclaring math symbol \hbar on input line 98.
+LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
+(Font)                  U/euf/m/n --> U/euf/b/n on input line 106.
+)) (/Users/devinreeh/Library/TinyTeX/texmf-dist/tex/generic/iftex/iftex.sty
+Package: iftex 2022/02/03 v1.0f TeX engine tests
+) (/Users/devinreeh/Library/TinyTeX/texmf-dist/tex/latex/unicode-math/unicode-math.sty (/Users/devinreeh/Library/TinyTeX/texmf-dist/tex/latex/l3kernel/expl3.sty
+Package: expl3 2024-05-08 L3 programming layer (loader) 
+(/Users/devinreeh/Library/TinyTeX/texmf-dist/tex/latex/l3backend/l3backend-luatex.def
+File: l3backend-luatex.def 2024-05-08 L3 backend support: PDF output (LuaTeX)
+\l__color_backend_stack_int=\count273
+Inserting `l3color' in `luaotfload.parse_color'.
+\l__pdf_internal_box=\box53
+))
+Package: unicode-math 2023/08/13 v0.8r Unicode maths in XeLaTeX and LuaLaTeX
+(/Users/devinreeh/Library/TinyTeX/texmf-dist/tex/latex/unicode-math/unicode-math-luatex.sty
+Package: unicode-math-luatex 2023/08/13 v0.8r Unicode maths in XeLaTeX and LuaLaTeX
+(/Users/devinreeh/Library/TinyTeX/texmf-dist/tex/latex/l3packages/xparse/xparse.sty
+Package: xparse 2024-05-08 L3 Experimental document command parser
+) (/Users/devinreeh/Library/TinyTeX/texmf-dist/tex/latex/l3packages/l3keys2e/l3keys2e.sty
+Package: l3keys2e 2024-05-08 LaTeX2e option processing using LaTeX3 keys
+) (/Users/devinreeh/Library/TinyTeX/texmf-dist/tex/latex/fontspec/fontspec.sty
+Package: fontspec 2024/05/11 v2.9e Font selection for XeLaTeX and LuaLaTeX
+Lua module: fontspec 2024/05/11 2.9e Font selection for XeLaTeX and LuaLaTeX (/Users/devinreeh/Library/TinyTeX/texmf-dist/tex/latex/fontspec/fontspec-luatex.sty
+Package: fontspec-luatex 2024/05/11 v2.9e Font selection for XeLaTeX and LuaLaTeX
+\l__fontspec_script_int=\count274
+\l__fontspec_language_int=\count275
+\l__fontspec_strnum_int=\count276
+\l__fontspec_tmp_int=\count277
+\l__fontspec_tmpa_int=\count278
+\l__fontspec_tmpb_int=\count279
+\l__fontspec_tmpc_int=\count280
+\l__fontspec_em_int=\count281
+\l__fontspec_emdef_int=\count282
+\l__fontspec_strong_int=\count283
+\l__fontspec_strongdef_int=\count284
+\l__fontspec_tmpa_dim=\dimen149
+\l__fontspec_tmpb_dim=\dimen150
+\l__fontspec_tmpc_dim=\dimen151
+(/Users/devinreeh/Library/TinyTeX/texmf-dist/tex/latex/base/fontenc.sty
+Package: fontenc 2021/04/29 v2.0v Standard LaTeX package
+) (/Users/devinreeh/Library/TinyTeX/texmf-dist/tex/latex/fontspec/fontspec.cfg))) (/Users/devinreeh/Library/TinyTeX/texmf-dist/tex/latex/base/fix-cm.sty
+Package: fix-cm 2020/11/24 v1.1t fixes to LaTeX
+(/Users/devinreeh/Library/TinyTeX/texmf-dist/tex/latex/base/ts1enc.def
+File: ts1enc.def 2001/06/05 v3.0e (jk/car/fm) Standard LaTeX file
+LaTeX Font Info:    Redeclaring font encoding TS1 on input line 47.
+)) (/Users/devinreeh/Library/TinyTeX/texmf-dist/tex/lualatex/lualatex-math/lualatex-math.sty
+Package: lualatex-math 2022/01/01 v1.12 Patches for mathematics typesetting with LuaLaTeX
+(/Users/devinreeh/Library/TinyTeX/texmf-dist/tex/latex/etoolbox/etoolbox.sty
+Package: etoolbox 2020/10/05 v2.5k e-TeX tools for LaTeX (JAW)
+\etb@tempcnta=\count285
+)
+Lua module: lualatex-math 2013/08/03 1.3 Patches for mathematics typesetting with LuaLaTeX)
+\g__um_fam_int=\count286
+\g__um_fonts_used_int=\count287
+\l__um_primecount_int=\count288
+\g__um_primekern_muskip=\muskip17
+(/Users/devinreeh/Library/TinyTeX/texmf-dist/tex/latex/unicode-math/unicode-math-table.tex))) (/Users/devinreeh/Library/TinyTeX/texmf-dist/tex/latex/lm/lmodern.sty
+Package: lmodern 2015/05/01 v1.6.1 Latin Modern Fonts
+LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
+(Font)                  OT1/cmr/m/n --> OT1/lmr/m/n on input line 22.
+LaTeX Font Info:    Overwriting symbol font `letters' in version `normal'
+(Font)                  OML/cmm/m/it --> OML/lmm/m/it on input line 23.
+LaTeX Font Info:    Overwriting symbol font `symbols' in version `normal'
+(Font)                  OMS/cmsy/m/n --> OMS/lmsy/m/n on input line 24.
+LaTeX Font Info:    Overwriting symbol font `largesymbols' in version `normal'
+(Font)                  OMX/cmex/m/n --> OMX/lmex/m/n on input line 25.
+LaTeX Font Info:    Overwriting symbol font `operators' in version `bold'
+(Font)                  OT1/cmr/bx/n --> OT1/lmr/bx/n on input line 26.
+LaTeX Font Info:    Overwriting symbol font `letters' in version `bold'
+(Font)                  OML/cmm/b/it --> OML/lmm/b/it on input line 27.
+LaTeX Font Info:    Overwriting symbol font `symbols' in version `bold'
+(Font)                  OMS/cmsy/b/n --> OMS/lmsy/b/n on input line 28.
+LaTeX Font Info:    Overwriting symbol font `largesymbols' in version `bold'
+(Font)                  OMX/cmex/m/n --> OMX/lmex/m/n on input line 29.
+LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `normal'
+(Font)                  OT1/cmr/bx/n --> OT1/lmr/bx/n on input line 31.
+LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `normal'
+(Font)                  OT1/cmss/m/n --> OT1/lmss/m/n on input line 32.
+LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `normal'
+(Font)                  OT1/cmr/m/it --> OT1/lmr/m/it on input line 33.
+LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `normal'
+(Font)                  OT1/cmtt/m/n --> OT1/lmtt/m/n on input line 34.
+LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `bold'
+(Font)                  OT1/cmr/bx/n --> OT1/lmr/bx/n on input line 35.
+LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `bold'
+(Font)                  OT1/cmss/bx/n --> OT1/lmss/bx/n on input line 36.
+LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `bold'
+(Font)                  OT1/cmr/bx/it --> OT1/lmr/bx/it on input line 37.
+LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `bold'
+(Font)                  OT1/cmtt/m/n --> OT1/lmtt/m/n on input line 38.
+) (/Users/devinreeh/Library/TinyTeX/texmf-dist/tex/latex/xcolor/xcolor.sty
+Package: xcolor 2023/11/15 v3.01 LaTeX color extensions (UK)
+(/Users/devinreeh/Library/TinyTeX/texmf-dist/tex/latex/graphics-cfg/color.cfg
+File: color.cfg 2016/01/02 v1.6 sample color configuration
+)
+Package xcolor Info: Driver file: luatex.def on input line 274.
+(/Users/devinreeh/Library/TinyTeX/texmf-dist/tex/latex/graphics-def/luatex.def
+File: luatex.def 2024/04/13 v1.2e Graphics/color driver for luatex
+) (/Users/devinreeh/Library/TinyTeX/texmf-dist/tex/latex/graphics/mathcolor.ltx)
+Package xcolor Info: Model `cmy' substituted by `cmy0' on input line 1350.
+Package xcolor Info: Model `hsb' substituted by `rgb' on input line 1354.
+Package xcolor Info: Model `RGB' extended on input line 1366.
+Package xcolor Info: Model `HTML' substituted by `rgb' on input line 1368.
+Package xcolor Info: Model `Hsb' substituted by `hsb' on input line 1369.
+Package xcolor Info: Model `tHsb' substituted by `hsb' on input line 1370.
+Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1371.
+Package xcolor Info: Model `Gray' substituted by `gray' on input line 1372.
+Package xcolor Info: Model `wave' substituted by `hsb' on input line 1373.
+) (/Users/devinreeh/Library/TinyTeX/texmf-dist/tex/latex/geometry/geometry.sty
+Package: geometry 2020/01/02 v5.9 Page Geometry
+(/Users/devinreeh/Library/TinyTeX/texmf-dist/tex/latex/graphics/keyval.sty
+Package: keyval 2022/05/29 v1.15 key=value parser (DPC)
+\KV@toks@=\toks22
+) (/Users/devinreeh/Library/TinyTeX/texmf-dist/tex/generic/iftex/ifvtex.sty
+Package: ifvtex 2019/10/25 v1.7 ifvtex legacy package. Use iftex instead.
+)
+\Gm@cnth=\count289
+\Gm@cntv=\count290
+\c@Gm@tempcnt=\count291
+\Gm@bindingoffset=\dimen152
+\Gm@wd@mp=\dimen153
+\Gm@odd@mp=\dimen154
+\Gm@even@mp=\dimen155
+\Gm@layoutwidth=\dimen156
+\Gm@layoutheight=\dimen157
+\Gm@layouthoffset=\dimen158
+\Gm@layoutvoffset=\dimen159
+\Gm@dimlist=\toks23
+) (/Users/devinreeh/Library/TinyTeX/texmf-dist/tex/latex/fancyvrb/fancyvrb.sty
+Package: fancyvrb 2024/01/20 4.5c verbatim text (tvz,hv)
+\FV@CodeLineNo=\count292
+\FV@InFile=\read2
+\FV@TabBox=\box54
+\c@FancyVerbLine=\count293
+\FV@StepNumber=\count294
+\FV@OutFile=\write3
+) (/Users/devinreeh/Library/TinyTeX/texmf-dist/tex/latex/framed/framed.sty
+Package: framed 2011/10/22 v 0.96: framed or shaded text with page breaks
+\OuterFrameSep=\skip53
+\fb@frw=\dimen160
+\fb@frh=\dimen161
+\FrameRule=\dimen162
+\FrameSep=\dimen163
+) (/Users/devinreeh/Library/TinyTeX/texmf-dist/tex/latex/graphics/graphicx.sty
+Package: graphicx 2021/09/16 v1.2d Enhanced LaTeX Graphics (DPC,SPQR)
+(/Users/devinreeh/Library/TinyTeX/texmf-dist/tex/latex/graphics/graphics.sty
+Package: graphics 2022/03/10 v1.4e Standard LaTeX Graphics (DPC,SPQR)
+(/Users/devinreeh/Library/TinyTeX/texmf-dist/tex/latex/graphics/trig.sty
+Package: trig 2021/08/11 v1.11 sin cos tan (DPC)
+) (/Users/devinreeh/Library/TinyTeX/texmf-dist/tex/latex/graphics-cfg/graphics.cfg
+File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
+)
+Package graphics Info: Driver file: luatex.def on input line 107.
+)
+\Gin@req@height=\dimen164
+\Gin@req@width=\dimen165
+)
+\pandoc@box=\box55
+(/Users/devinreeh/Library/TinyTeX/texmf-dist/tex/latex/bookmark/bookmark.sty
+Package: bookmark 2023-12-10 v1.31 PDF bookmarks (HO)
+(/Users/devinreeh/Library/TinyTeX/texmf-dist/tex/latex/hyperref/hyperref.sty
+Package: hyperref 2024-05-23 v7.01i Hypertext links for LaTeX
+(/Users/devinreeh/Library/TinyTeX/texmf-dist/tex/latex/kvsetkeys/kvsetkeys.sty
+Package: kvsetkeys 2022-10-05 v1.19 Key value parser (HO)
+) (/Users/devinreeh/Library/TinyTeX/texmf-dist/tex/generic/kvdefinekeys/kvdefinekeys.sty
+Package: kvdefinekeys 2019-12-19 v1.6 Define keys (HO)
+) (/Users/devinreeh/Library/TinyTeX/texmf-dist/tex/generic/pdfescape/pdfescape.sty
+Package: pdfescape 2019/12/09 v1.15 Implements pdfTeX's escape features (HO)
+(/Users/devinreeh/Library/TinyTeX/texmf-dist/tex/generic/ltxcmds/ltxcmds.sty
+Package: ltxcmds 2023-12-04 v1.26 LaTeX kernel commands for general use (HO)
+) (/Users/devinreeh/Library/TinyTeX/texmf-dist/tex/generic/pdftexcmds/pdftexcmds.sty
+Package: pdftexcmds 2020-06-27 v0.33 Utility functions of pdfTeX for LuaTeX (HO)
+(/Users/devinreeh/Library/TinyTeX/texmf-dist/tex/generic/infwarerr/infwarerr.sty
+Package: infwarerr 2019/12/03 v1.5 Providing info/warning/error messages (HO)
+)
+Package pdftexcmds Info: \pdf@primitive is available.
+Package pdftexcmds Info: \pdf@ifprimitive is available.
+Package pdftexcmds Info: \pdfdraftmode found.
+\pdftexcmds@toks=\toks24
+)) (/Users/devinreeh/Library/TinyTeX/texmf-dist/tex/latex/hycolor/hycolor.sty
+Package: hycolor 2020-01-27 v1.10 Color options for hyperref/bookmark (HO)
+) (/Users/devinreeh/Library/TinyTeX/texmf-dist/tex/latex/hyperref/nameref.sty
+Package: nameref 2023-11-26 v2.56 Cross-referencing by name of section
+(/Users/devinreeh/Library/TinyTeX/texmf-dist/tex/latex/refcount/refcount.sty
+Package: refcount 2019/12/15 v3.6 Data extraction from label references (HO)
+) (/Users/devinreeh/Library/TinyTeX/texmf-dist/tex/generic/gettitlestring/gettitlestring.sty
+Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
+(/Users/devinreeh/Library/TinyTeX/texmf-dist/tex/latex/kvoptions/kvoptions.sty
+Package: kvoptions 2022-06-15 v3.15 Key value format for package options (HO)
+))
+\c@section@level=\count295
+) (/Users/devinreeh/Library/TinyTeX/texmf-dist/tex/generic/stringenc/stringenc.sty
+Package: stringenc 2019/11/29 v1.12 Convert strings between diff. encodings (HO)
+)
+\@linkdim=\dimen166
+\Hy@linkcounter=\count296
+\Hy@pagecounter=\count297
+(/Users/devinreeh/Library/TinyTeX/texmf-dist/tex/latex/hyperref/pd1enc.def
+File: pd1enc.def 2024-05-23 v7.01i Hyperref: PDFDocEncoding definition (HO)
+) (/Users/devinreeh/Library/TinyTeX/texmf-dist/tex/generic/intcalc/intcalc.sty
+Package: intcalc 2019/12/15 v1.3 Expandable calculations with integers (HO)
+)
+\Hy@SavedSpaceFactor=\count298
+(/Users/devinreeh/Library/TinyTeX/texmf-dist/tex/latex/hyperref/puenc.def
+File: puenc.def 2024-05-23 v7.01i Hyperref: PDF Unicode definition (HO)
+)
+Package hyperref Info: Option `unicode' set `true' on input line 4040.
+Package hyperref Info: Hyper figures OFF on input line 4157.
+Package hyperref Info: Link nesting OFF on input line 4162.
+Package hyperref Info: Hyper index ON on input line 4165.
+Package hyperref Info: Plain pages OFF on input line 4172.
+Package hyperref Info: Backreferencing OFF on input line 4177.
+Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
+Package hyperref Info: Bookmarks ON on input line 4424.
+\c@Hy@tempcnt=\count299
+(/Users/devinreeh/Library/TinyTeX/texmf-dist/tex/latex/url/url.sty
+\Urlmuskip=\muskip18
+Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
+)
+LaTeX Info: Redefining \url on input line 4763.
+\XeTeXLinkMargin=\dimen167
+(/Users/devinreeh/Library/TinyTeX/texmf-dist/tex/generic/bitset/bitset.sty
+Package: bitset 2019/12/09 v1.3 Handle bit-vector datatype (HO)
+(/Users/devinreeh/Library/TinyTeX/texmf-dist/tex/generic/bigintcalc/bigintcalc.sty
+Package: bigintcalc 2019/12/15 v1.5 Expandable calculations on big integers (HO)
+))
+\Fld@menulength=\count300
+\Field@Width=\dimen168
+\Fld@charsize=\dimen169
+Package hyperref Info: Hyper figures OFF on input line 6042.
+Package hyperref Info: Link nesting OFF on input line 6047.
+Package hyperref Info: Hyper index ON on input line 6050.
+Package hyperref Info: backreferencing OFF on input line 6057.
+Package hyperref Info: Link coloring OFF on input line 6062.
+Package hyperref Info: Link coloring with OCG OFF on input line 6067.
+Package hyperref Info: PDF/A mode OFF on input line 6072.
+(/Users/devinreeh/Library/TinyTeX/texmf-dist/tex/latex/base/atbegshi-ltx.sty
+Package: atbegshi-ltx 2021/01/10 v1.0c Emulation of the original atbegshi
+package with kernel methods
+)
+\Hy@abspage=\count301
+\c@Item=\count302
+\c@Hfootnote=\count303
+)
+Package hyperref Info: Driver (autodetected): hluatex.
+(/Users/devinreeh/Library/TinyTeX/texmf-dist/tex/latex/hyperref/hluatex.def
+File: hluatex.def 2024-05-23 v7.01i Hyperref driver for luaTeX
+(/Users/devinreeh/Library/TinyTeX/texmf-dist/tex/latex/base/atveryend-ltx.sty
+Package: atveryend-ltx 2020/08/19 v1.0a Emulation of the original atveryend package
+with kernel methods
+)
+\Fld@listcount=\count304
+\c@bookmark@seq@number=\count305
+(/Users/devinreeh/Library/TinyTeX/texmf-dist/tex/latex/rerunfilecheck/rerunfilecheck.sty
+Package: rerunfilecheck 2022-07-10 v1.10 Rerun checks for auxiliary files (HO)
+(/Users/devinreeh/Library/TinyTeX/texmf-dist/tex/generic/uniquecounter/uniquecounter.sty
+Package: uniquecounter 2019/12/15 v1.4 Provide unlimited unique counter (HO)
+)
+Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 285.
+)
+\Hy@SectionHShift=\skip54
+) (/Users/devinreeh/Library/TinyTeX/texmf-dist/tex/latex/bookmark/bkm-pdftex.def
+File: bkm-pdftex.def 2023-12-10 v1.31 bookmark driver for pdfTeX and luaTeX (HO)
+\BKM@id=\count306
+)) (./Final.aux)
+\openout1 = Final.aux
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 119.
+LaTeX Font Info:    ... okay on input line 119.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 119.
+LaTeX Font Info:    ... okay on input line 119.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 119.
+LaTeX Font Info:    ... okay on input line 119.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 119.
+LaTeX Font Info:    ... okay on input line 119.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 119.
+LaTeX Font Info:    ... okay on input line 119.
+LaTeX Font Info:    Checking defaults for TU/lmr/m/n on input line 119.
+LaTeX Font Info:    ... okay on input line 119.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 119.
+LaTeX Font Info:    ... okay on input line 119.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 119.
+LaTeX Font Info:    ... okay on input line 119.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 119.
+LaTeX Font Info:    ... okay on input line 119.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 119.
+LaTeX Font Info:    ... okay on input line 119.
+LaTeX Font Info:    Overwriting math alphabet `\mathrm' in version `normal'
+(Font)                  OT1/lmr/m/n --> TU/lmr/m/n on input line 119.
+LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `normal'
+(Font)                  OT1/lmr/m/it --> TU/lmr/m/it on input line 119.
+LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `normal'
+(Font)                  OT1/lmr/bx/n --> TU/lmr/bx/n on input line 119.
+LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `normal'
+(Font)                  OT1/lmss/m/n --> TU/lmss/m/n on input line 119.
+LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `bold'
+(Font)                  OT1/lmss/bx/n --> TU/lmss/bx/n on input line 119.
+LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `normal'
+(Font)                  OT1/lmtt/m/n --> TU/lmtt/m/n on input line 119.
+LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `bold'
+(Font)                  OT1/lmtt/m/n --> TU/lmtt/bx/n on input line 119.
+
+Package fontspec Info: 
+(fontspec)             latinmodern-math scale = 0.9999964596882403.
+
+
+Package fontspec Info: 
+(fontspec)             latinmodern-math scale = 0.9999964596882403.
+
+
+Package fontspec Info: 
+(fontspec)             latinmodern-math scale = 0.9999964596882403.
+
+
+Package fontspec Info: 
+(fontspec)             Font family 'latinmodern-math.otf(0)' created for font
+(fontspec)             'latinmodern-math.otf' with options
+(fontspec)             [Scale=MatchLowercase,Renderer=Basic,BoldItalicFont={},ItalicFont={},SmallCapsFont={},Script=Math,RawFeature={mathfontdimen=xetex},BoldFont={latinmodern-math.otf}].
+(fontspec)              
+(fontspec)              This font family consists of the following NFSS
+(fontspec)             series/shapes:
+(fontspec)              
+(fontspec)             - 'normal' (m/n) with NFSS spec.:
+(fontspec)             <->s*[0.9999964596882403]"[latinmodern-math.otf]:mode=base;script=math;language=dflt;mathfontdimen=xetex;"
+(fontspec)             - 'bold' (b/n) with NFSS spec.:
+(fontspec)             <->s*[0.9999964596882403]"[latinmodern-math.otf]:mode=base;script=math;language=dflt;mathfontdimen=xetex;"
+
+LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(0)/m/n' will be
+(Font)              scaled to size 10.0pt on input line 119.
+
+Package fontspec Info: 
+(fontspec)             latinmodern-math scale = 0.9999964596882403.
+
+
+Package fontspec Info: 
+(fontspec)             latinmodern-math scale = 0.9999964596882403.
+
+
+Package fontspec Info: 
+(fontspec)             latinmodern-math scale = 0.9999964596882403.
+
+
+Package fontspec Info: 
+(fontspec)             latinmodern-math scale = 0.9999964596882403.
+
+
+Package fontspec Info: 
+(fontspec)             latinmodern-math scale = 0.9999964596882403.
+
+
+Package fontspec Info: 
+(fontspec)             Font family 'latinmodern-math.otf(1)' created for font
+(fontspec)             'latinmodern-math.otf' with options
+(fontspec)             [Scale=MatchLowercase,Renderer=Basic,BoldItalicFont={},ItalicFont={},SmallCapsFont={},Script=Math,SizeFeatures={{Size=8.5-},{Size=6-8.5,Font=latinmodern-math.otf,Style=MathScript},{Size=-6,Font=latinmodern-math.otf,Style=MathScriptScript}},RawFeature={mathfontdimen=xetex},BoldFont={latinmodern-math.otf}].
+(fontspec)              
+(fontspec)              This font family consists of the following NFSS
+(fontspec)             series/shapes:
+(fontspec)              
+(fontspec)             - 'normal' (m/n) with NFSS spec.:
+(fontspec)             <8.5->s*[0.9999964596882403]"[latinmodern-math.otf]:mode=base;script=math;language=dflt;mathfontdimen=xetex;"<6-8.5>s*[0.9999964596882403]"[latinmodern-math.otf]:mode=base;script=math;language=dflt;mathfontdimen=xetex;+ssty=0;"<-6>s*[0.9999964596882403]"[latinmodern-math.otf]:mode=base;script=math;language=dflt;mathfontdimen=xetex;+ssty=1;"
+(fontspec)             - 'bold' (b/n) with NFSS spec.:
+(fontspec)             <->s*[0.9999964596882403]"[latinmodern-math.otf]:mode=base;script=math;language=dflt;mathfontdimen=xetex;"
+
+LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(1)/m/n' will be
+(Font)              scaled to size 10.0pt on input line 119.
+LaTeX Font Info:    Encoding `OT1' has changed to `TU' for symbol font
+(Font)              `operators' in the math version `normal' on input line 119.
+LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
+(Font)                  OT1/lmr/m/n --> TU/latinmodern-math.otf(1)/m/n on input line 119.
+LaTeX Font Info:    Encoding `OT1' has changed to `TU' for symbol font
+(Font)              `operators' in the math version `bold' on input line 119.
+LaTeX Font Info:    Overwriting symbol font `operators' in version `bold'
+(Font)                  OT1/lmr/bx/n --> TU/latinmodern-math.otf(1)/b/n on input line 119.
+
+Package fontspec Info: 
+(fontspec)             latinmodern-math scale = 0.9999964596882403.
+
+
+Package fontspec Info: 
+(fontspec)             latinmodern-math scale = 0.9999964596882403.
+
+
+Package fontspec Info: 
+(fontspec)             latinmodern-math scale = 0.9999964596882403.
+
+
+Package fontspec Info: 
+(fontspec)             latinmodern-math scale = 0.9999964596882403.
+
+
+Package fontspec Info: 
+(fontspec)             latinmodern-math scale = 0.9999964596882403.
+
+
+Package fontspec Info: 
+(fontspec)             Font family 'latinmodern-math.otf(2)' created for font
+(fontspec)             'latinmodern-math.otf' with options
+(fontspec)             [Scale=MatchLowercase,Renderer=Basic,BoldItalicFont={},ItalicFont={},SmallCapsFont={},Script=Math,SizeFeatures={{Size=8.5-},{Size=6-8.5,Font=latinmodern-math.otf,Style=MathScript},{Size=-6,Font=latinmodern-math.otf,Style=MathScriptScript}},RawFeature={mathfontdimen=xetex},BoldFont={latinmodern-math.otf},RawFeature={mathfontdimen=tex2}].
+(fontspec)              
+(fontspec)              This font family consists of the following NFSS
+(fontspec)             series/shapes:
+(fontspec)              
+(fontspec)             - 'normal' (m/n) with NFSS spec.:
+(fontspec)             <8.5->s*[0.9999964596882403]"[latinmodern-math.otf]:mode=base;script=math;language=dflt;mathfontdimen=xetex;mathfontdimen=tex2;"<6-8.5>s*[0.9999964596882403]"[latinmodern-math.otf]:mode=base;script=math;language=dflt;mathfontdimen=xetex;mathfontdimen=tex2;+ssty=0;"<-6>s*[0.9999964596882403]"[latinmodern-math.otf]:mode=base;script=math;language=dflt;mathfontdimen=xetex;mathfontdimen=tex2;+ssty=1;"
+(fontspec)             - 'bold' (b/n) with NFSS spec.:
+(fontspec)             <->s*[0.9999964596882403]"[latinmodern-math.otf]:mode=base;script=math;language=dflt;mathfontdimen=xetex;mathfontdimen=tex2;"
+
+LaTeX Font Info:    Encoding `OMS' has changed to `TU' for symbol font
+(Font)              `symbols' in the math version `normal' on input line 119.
+LaTeX Font Info:    Overwriting symbol font `symbols' in version `normal'
+(Font)                  OMS/lmsy/m/n --> TU/latinmodern-math.otf(2)/m/n on input line 119.
+LaTeX Font Info:    Encoding `OMS' has changed to `TU' for symbol font
+(Font)              `symbols' in the math version `bold' on input line 119.
+LaTeX Font Info:    Overwriting symbol font `symbols' in version `bold'
+(Font)                  OMS/lmsy/b/n --> TU/latinmodern-math.otf(2)/b/n on input line 119.
+
+Package fontspec Info: 
+(fontspec)             latinmodern-math scale = 0.9999964596882403.
+
+
+Package fontspec Info: 
+(fontspec)             latinmodern-math scale = 0.9999964596882403.
+
+
+Package fontspec Info: 
+(fontspec)             latinmodern-math scale = 0.9999964596882403.
+
+
+Package fontspec Info: 
+(fontspec)             latinmodern-math scale = 0.9999964596882403.
+
+
+Package fontspec Info: 
+(fontspec)             latinmodern-math scale = 0.9999964596882403.
+
+
+Package fontspec Info: 
+(fontspec)             Font family 'latinmodern-math.otf(3)' created for font
+(fontspec)             'latinmodern-math.otf' with options
+(fontspec)             [Scale=MatchLowercase,Renderer=Basic,BoldItalicFont={},ItalicFont={},SmallCapsFont={},Script=Math,SizeFeatures={{Size=8.5-},{Size=6-8.5,Font=latinmodern-math.otf,Style=MathScript},{Size=-6,Font=latinmodern-math.otf,Style=MathScriptScript}},RawFeature={mathfontdimen=xetex},BoldFont={latinmodern-math.otf},RawFeature={mathfontdimen=tex3}].
+(fontspec)              
+(fontspec)              This font family consists of the following NFSS
+(fontspec)             series/shapes:
+(fontspec)              
+(fontspec)             - 'normal' (m/n) with NFSS spec.:
+(fontspec)             <8.5->s*[0.9999964596882403]"[latinmodern-math.otf]:mode=base;script=math;language=dflt;mathfontdimen=xetex;mathfontdimen=tex3;"<6-8.5>s*[0.9999964596882403]"[latinmodern-math.otf]:mode=base;script=math;language=dflt;mathfontdimen=xetex;mathfontdimen=tex3;+ssty=0;"<-6>s*[0.9999964596882403]"[latinmodern-math.otf]:mode=base;script=math;language=dflt;mathfontdimen=xetex;mathfontdimen=tex3;+ssty=1;"
+(fontspec)             - 'bold' (b/n) with NFSS spec.:
+(fontspec)             <->s*[0.9999964596882403]"[latinmodern-math.otf]:mode=base;script=math;language=dflt;mathfontdimen=xetex;mathfontdimen=tex3;"
+
+LaTeX Font Info:    Encoding `OMX' has changed to `TU' for symbol font
+(Font)              `largesymbols' in the math version `normal' on input line 119.
+LaTeX Font Info:    Overwriting symbol font `largesymbols' in version `normal'
+(Font)                  OMX/lmex/m/n --> TU/latinmodern-math.otf(3)/m/n on input line 119.
+LaTeX Font Info:    Encoding `OMX' has changed to `TU' for symbol font
+(Font)              `largesymbols' in the math version `bold' on input line 119.
+LaTeX Font Info:    Overwriting symbol font `largesymbols' in version `bold'
+(Font)                  OMX/lmex/m/n --> TU/latinmodern-math.otf(3)/b/n on input line 119.
+LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(1)/m/n' will be
+(Font)              scaled to size 7.0pt on input line 119.
+LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(1)/m/n' will be
+(Font)              scaled to size 5.0pt on input line 119.
+LaTeX Font Info:    Trying to load font information for OML+lmm on input line 119.
+(/Users/devinreeh/Library/TinyTeX/texmf-dist/tex/latex/lm/omllmm.fd
+File: omllmm.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
+)
+LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(2)/m/n' will be
+(Font)              scaled to size 10.0pt on input line 119.
+LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(2)/m/n' will be
+(Font)              scaled to size 7.0pt on input line 119.
+LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(2)/m/n' will be
+(Font)              scaled to size 5.0pt on input line 119.
+LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(3)/m/n' will be
+(Font)              scaled to size 10.0pt on input line 119.
+LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(3)/m/n' will be
+(Font)              scaled to size 7.0pt on input line 119.
+LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(3)/m/n' will be
+(Font)              scaled to size 5.0pt on input line 119.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 119.
+(/Users/devinreeh/Library/TinyTeX/texmf-dist/tex/latex/amsfonts/umsa.fd
+File: umsa.fd 2013/01/14 v3.01 AMS symbols A
+)
+LaTeX Font Info:    Trying to load font information for U+msb on input line 119.
+(/Users/devinreeh/Library/TinyTeX/texmf-dist/tex/latex/amsfonts/umsb.fd
+File: umsb.fd 2013/01/14 v3.01 AMS symbols B
+) (/Users/devinreeh/Library/TinyTeX/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
+Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
+Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 485.
+(/Users/devinreeh/Library/TinyTeX/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
+File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Live
+))
+*geometry* driver: auto-detecting
+*geometry* detected driver: luatex
+*geometry* verbose mode - [ preamble ] result:
+* driver: luatex
+* paper: <default>
+* layout: <same size as paper>
+* layoutoffset:(h,v)=(0.0pt,0.0pt)
+* modes: 
+* h-part:(L,W,R)=(72.26999pt, 469.75502pt, 72.26999pt)
+* v-part:(T,H,B)=(72.26999pt, 650.43001pt, 72.26999pt)
+* \paperwidth=614.295pt
+* \paperheight=794.96999pt
+* \textwidth=469.75502pt
+* \textheight=650.43001pt
+* \oddsidemargin=0.0pt
+* \evensidemargin=0.0pt
+* \topmargin=-37.0pt
+* \headheight=12.0pt
+* \headsep=25.0pt
+* \topskip=10.0pt
+* \footskip=30.0pt
+* \marginparwidth=65.0pt
+* \marginparsep=11.0pt
+* \columnsep=10.0pt
+* \skip\footins=9.0pt plus 4.0pt minus 2.0pt
+* \hoffset=0.0pt
+* \voffset=0.0pt
+* \mag=1000
+* \@twocolumnfalse
+* \@twosidefalse
+* \@mparswitchfalse
+* \@reversemarginfalse
+* (1in=72.27pt=25.4mm, 1cm=28.453pt)
+
+Package hyperref Info: Link coloring OFF on input line 119.
+LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(1)/m/n' will be
+(Font)              scaled to size 12.0pt on input line 121.
+LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(1)/m/n' will be
+(Font)              scaled to size 8.0pt on input line 121.
+LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(1)/m/n' will be
+(Font)              scaled to size 6.0pt on input line 121.
+LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(2)/m/n' will be
+(Font)              scaled to size 12.0pt on input line 121.
+LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(2)/m/n' will be
+(Font)              scaled to size 8.0pt on input line 121.
+LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(2)/m/n' will be
+(Font)              scaled to size 6.0pt on input line 121.
+LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(3)/m/n' will be
+(Font)              scaled to size 12.0pt on input line 121.
+LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(3)/m/n' will be
+(Font)              scaled to size 8.0pt on input line 121.
+LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(3)/m/n' will be
+(Font)              scaled to size 6.0pt on input line 121.
+
+Overfull \hbox (64.4049pt too wide) in paragraph at lines 171--172
+[][]$\TU/lmr/m/n/10 https://my.lausd.net/OpenDataCatalog/DocView.aspx?id=3145&dbid=0&repo=OpenDataCatalog&searchid=
+ []
+
+LaTeX Font Info:    Font shape `TU/lmtt/bx/n' in size <10> not available
+(Font)              Font shape `TU/lmtt/b/n' tried instead on input line 180.
+[1
+
+{/Users/devinreeh/Library/TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
+Underfull \vbox (badness 10000) detected at line 274
+ []
+
+
+Underfull \vbox (badness 10000) detected at line 274
+ []
+
+[2]
+<Final_files/figure-latex/classical-rdd-results-and-plots-1.pdf, id=31, 433.62pt x 289.08pt>
+File: Final_files/figure-latex/classical-rdd-results-and-plots-1.pdf Graphic file (type pdf)
+<use Final_files/figure-latex/classical-rdd-results-and-plots-1.pdf>
+Package luatex.def Info: Final_files/figure-latex/classical-rdd-results-and-plots-1.pdf  used on input line 297.
+(luatex.def)             Requested size: 433.61894pt x 289.07928pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 297--299
+[] \TU/lmr/m/n/10 ##
+ []
+
+[3]
+<Final_files/figure-latex/classical-rdd-results-and-plots-2.pdf, id=36, 433.62pt x 289.08pt>
+File: Final_files/figure-latex/classical-rdd-results-and-plots-2.pdf Graphic file (type pdf)
+<use Final_files/figure-latex/classical-rdd-results-and-plots-2.pdf>
+Package luatex.def Info: Final_files/figure-latex/classical-rdd-results-and-plots-2.pdf  used on input line 312.
+(luatex.def)             Requested size: 433.61894pt x 289.07928pt.
+[4<./Final_files/figure-latex/classical-rdd-results-and-plots-1.pdf>]
+<Final_files/figure-latex/classical-rdd-results-and-plots-3.pdf, id=46, 433.62pt x 289.08pt>
+File: Final_files/figure-latex/classical-rdd-results-and-plots-3.pdf Graphic file (type pdf)
+<use Final_files/figure-latex/classical-rdd-results-and-plots-3.pdf>
+Package luatex.def Info: Final_files/figure-latex/classical-rdd-results-and-plots-3.pdf  used on input line 327.
+(luatex.def)             Requested size: 433.61894pt x 289.07928pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 327--329
+[][] \TU/lmr/m/n/10 ##
+ []
+
+[5<./Final_files/figure-latex/classical-rdd-results-and-plots-2.pdf>]
+<Final_files/figure-latex/classical-rdd-results-and-plots-4.pdf, id=55, 433.62pt x 289.08pt>
+File: Final_files/figure-latex/classical-rdd-results-and-plots-4.pdf Graphic file (type pdf)
+<use Final_files/figure-latex/classical-rdd-results-and-plots-4.pdf>
+Package luatex.def Info: Final_files/figure-latex/classical-rdd-results-and-plots-4.pdf  used on input line 342.
+(luatex.def)             Requested size: 433.61894pt x 289.07928pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 342--344
+[][] \TU/lmr/m/n/10 ##
+ []
+
+[6<./Final_files/figure-latex/classical-rdd-results-and-plots-3.pdf>]
+<Final_files/figure-latex/classical-rdd-results-and-plots-5.pdf, id=64, 433.62pt x 289.08pt>
+File: Final_files/figure-latex/classical-rdd-results-and-plots-5.pdf Graphic file (type pdf)
+<use Final_files/figure-latex/classical-rdd-results-and-plots-5.pdf>
+Package luatex.def Info: Final_files/figure-latex/classical-rdd-results-and-plots-5.pdf  used on input line 357.
+(luatex.def)             Requested size: 433.61894pt x 289.07928pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 357--359
+[][] \TU/lmr/m/n/10 ##
+ []
+
+[7<./Final_files/figure-latex/classical-rdd-results-and-plots-4.pdf>]
+<Final_files/figure-latex/classical-rdd-results-and-plots-6.pdf, id=73, 433.62pt x 289.08pt>
+File: Final_files/figure-latex/classical-rdd-results-and-plots-6.pdf Graphic file (type pdf)
+<use Final_files/figure-latex/classical-rdd-results-and-plots-6.pdf>
+Package luatex.def Info: Final_files/figure-latex/classical-rdd-results-and-plots-6.pdf  used on input line 372.
+(luatex.def)             Requested size: 433.61894pt x 289.07928pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 372--374
+[][] \TU/lmr/m/n/10 ##
+ []
+
+[8<./Final_files/figure-latex/classical-rdd-results-and-plots-5.pdf>]
+<Final_files/figure-latex/classical-rdd-results-and-plots-7.pdf, id=82, 433.62pt x 289.08pt>
+File: Final_files/figure-latex/classical-rdd-results-and-plots-7.pdf Graphic file (type pdf)
+<use Final_files/figure-latex/classical-rdd-results-and-plots-7.pdf>
+Package luatex.def Info: Final_files/figure-latex/classical-rdd-results-and-plots-7.pdf  used on input line 387.
+(luatex.def)             Requested size: 433.61894pt x 289.07928pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 387--389
+[][] \TU/lmr/m/n/10 ##
+ []
+
+[9<./Final_files/figure-latex/classical-rdd-results-and-plots-6.pdf>]
+<Final_files/figure-latex/classical-rdd-results-and-plots-8.pdf, id=91, 433.62pt x 289.08pt>
+File: Final_files/figure-latex/classical-rdd-results-and-plots-8.pdf Graphic file (type pdf)
+<use Final_files/figure-latex/classical-rdd-results-and-plots-8.pdf>
+Package luatex.def Info: Final_files/figure-latex/classical-rdd-results-and-plots-8.pdf  used on input line 402.
+(luatex.def)             Requested size: 433.61894pt x 289.07928pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 402--404
+[][] \TU/lmr/m/n/10 ##
+ []
+
+[10<./Final_files/figure-latex/classical-rdd-results-and-plots-7.pdf>]
+<Final_files/figure-latex/classical-rdd-results-and-plots-9.pdf, id=100, 433.62pt x 289.08pt>
+File: Final_files/figure-latex/classical-rdd-results-and-plots-9.pdf Graphic file (type pdf)
+<use Final_files/figure-latex/classical-rdd-results-and-plots-9.pdf>
+Package luatex.def Info: Final_files/figure-latex/classical-rdd-results-and-plots-9.pdf  used on input line 417.
+(luatex.def)             Requested size: 433.61894pt x 289.07928pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 417--419
+[][] \TU/lmr/m/n/10 ##
+ []
+
+[11<./Final_files/figure-latex/classical-rdd-results-and-plots-8.pdf>]
+<Final_files/figure-latex/classical-rdd-results-and-plots-10.pdf, id=110, 433.62pt x 289.08pt>
+File: Final_files/figure-latex/classical-rdd-results-and-plots-10.pdf Graphic file (type pdf)
+<use Final_files/figure-latex/classical-rdd-results-and-plots-10.pdf>
+Package luatex.def Info: Final_files/figure-latex/classical-rdd-results-and-plots-10.pdf  used on input line 432.
+(luatex.def)             Requested size: 433.61894pt x 289.07928pt.
+[12<./Final_files/figure-latex/classical-rdd-results-and-plots-9.pdf>]
+<Final_files/figure-latex/classical-rdd-results-and-plots-11.pdf, id=119, 433.62pt x 289.08pt>
+File: Final_files/figure-latex/classical-rdd-results-and-plots-11.pdf Graphic file (type pdf)
+<use Final_files/figure-latex/classical-rdd-results-and-plots-11.pdf>
+Package luatex.def Info: Final_files/figure-latex/classical-rdd-results-and-plots-11.pdf  used on input line 447.
+(luatex.def)             Requested size: 433.61894pt x 289.07928pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 447--449
+[][] \TU/lmr/m/n/10 ##
+ []
+
+[13<./Final_files/figure-latex/classical-rdd-results-and-plots-10.pdf>]
+<Final_files/figure-latex/classical-rdd-results-and-plots-12.pdf, id=128, 433.62pt x 289.08pt>
+File: Final_files/figure-latex/classical-rdd-results-and-plots-12.pdf Graphic file (type pdf)
+<use Final_files/figure-latex/classical-rdd-results-and-plots-12.pdf>
+Package luatex.def Info: Final_files/figure-latex/classical-rdd-results-and-plots-12.pdf  used on input line 462.
+(luatex.def)             Requested size: 433.61894pt x 289.07928pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 462--464
+[][] \TU/lmr/m/n/10 ##
+ []
+
+[14<./Final_files/figure-latex/classical-rdd-results-and-plots-11.pdf>]
+<Final_files/figure-latex/classical-rdd-results-and-plots-13.pdf, id=137, 433.62pt x 289.08pt>
+File: Final_files/figure-latex/classical-rdd-results-and-plots-13.pdf Graphic file (type pdf)
+<use Final_files/figure-latex/classical-rdd-results-and-plots-13.pdf>
+Package luatex.def Info: Final_files/figure-latex/classical-rdd-results-and-plots-13.pdf  used on input line 477.
+(luatex.def)             Requested size: 433.61894pt x 289.07928pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 477--479
+[][] \TU/lmr/m/n/10 ##
+ []
+
+[15<./Final_files/figure-latex/classical-rdd-results-and-plots-12.pdf>]
+<Final_files/figure-latex/classical-rdd-results-and-plots-14.pdf, id=146, 433.62pt x 289.08pt>
+File: Final_files/figure-latex/classical-rdd-results-and-plots-14.pdf Graphic file (type pdf)
+<use Final_files/figure-latex/classical-rdd-results-and-plots-14.pdf>
+Package luatex.def Info: Final_files/figure-latex/classical-rdd-results-and-plots-14.pdf  used on input line 492.
+(luatex.def)             Requested size: 433.61894pt x 289.07928pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 492--494
+[][] \TU/lmr/m/n/10 ##
+ []
+
+[16<./Final_files/figure-latex/classical-rdd-results-and-plots-13.pdf>]
+<Final_files/figure-latex/classical-rdd-results-and-plots-15.pdf, id=155, 433.62pt x 289.08pt>
+File: Final_files/figure-latex/classical-rdd-results-and-plots-15.pdf Graphic file (type pdf)
+<use Final_files/figure-latex/classical-rdd-results-and-plots-15.pdf>
+Package luatex.def Info: Final_files/figure-latex/classical-rdd-results-and-plots-15.pdf  used on input line 507.
+(luatex.def)             Requested size: 433.61894pt x 289.07928pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 507--509
+[][] \TU/lmr/m/n/10 ##
+ []
+
+[17<./Final_files/figure-latex/classical-rdd-results-and-plots-14.pdf>]
+<Final_files/figure-latex/classical-rdd-results-and-plots-16.pdf, id=165, 433.62pt x 289.08pt>
+File: Final_files/figure-latex/classical-rdd-results-and-plots-16.pdf Graphic file (type pdf)
+<use Final_files/figure-latex/classical-rdd-results-and-plots-16.pdf>
+Package luatex.def Info: Final_files/figure-latex/classical-rdd-results-and-plots-16.pdf  used on input line 522.
+(luatex.def)             Requested size: 433.61894pt x 289.07928pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 522--524
+[][] \TU/lmr/m/n/10 ##
+ []
+
+[18<./Final_files/figure-latex/classical-rdd-results-and-plots-15.pdf>]
+<Final_files/figure-latex/classical-rdd-results-and-plots-17.pdf, id=174, 433.62pt x 289.08pt>
+File: Final_files/figure-latex/classical-rdd-results-and-plots-17.pdf Graphic file (type pdf)
+<use Final_files/figure-latex/classical-rdd-results-and-plots-17.pdf>
+Package luatex.def Info: Final_files/figure-latex/classical-rdd-results-and-plots-17.pdf  used on input line 537.
+(luatex.def)             Requested size: 433.61894pt x 289.07928pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 537--539
+[][] \TU/lmr/m/n/10 ##
+ []
+
+[19<./Final_files/figure-latex/classical-rdd-results-and-plots-16.pdf>]
+<Final_files/figure-latex/classical-rdd-results-and-plots-18.pdf, id=183, 433.62pt x 289.08pt>
+File: Final_files/figure-latex/classical-rdd-results-and-plots-18.pdf Graphic file (type pdf)
+<use Final_files/figure-latex/classical-rdd-results-and-plots-18.pdf>
+Package luatex.def Info: Final_files/figure-latex/classical-rdd-results-and-plots-18.pdf  used on input line 552.
+(luatex.def)             Requested size: 433.61894pt x 289.07928pt.
+[20<./Final_files/figure-latex/classical-rdd-results-and-plots-17.pdf>]
+<Final_files/figure-latex/classical-rdd-results-and-plots-19.pdf, id=192, 433.62pt x 289.08pt>
+File: Final_files/figure-latex/classical-rdd-results-and-plots-19.pdf Graphic file (type pdf)
+<use Final_files/figure-latex/classical-rdd-results-and-plots-19.pdf>
+Package luatex.def Info: Final_files/figure-latex/classical-rdd-results-and-plots-19.pdf  used on input line 567.
+(luatex.def)             Requested size: 433.61894pt x 289.07928pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 567--569
+[][] \TU/lmr/m/n/10 ##
+ []
+
+[21<./Final_files/figure-latex/classical-rdd-results-and-plots-18.pdf>]
+<Final_files/figure-latex/classical-rdd-results-and-plots-20.pdf, id=202, 433.62pt x 289.08pt>
+File: Final_files/figure-latex/classical-rdd-results-and-plots-20.pdf Graphic file (type pdf)
+<use Final_files/figure-latex/classical-rdd-results-and-plots-20.pdf>
+Package luatex.def Info: Final_files/figure-latex/classical-rdd-results-and-plots-20.pdf  used on input line 582.
+(luatex.def)             Requested size: 433.61894pt x 289.07928pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 582--584
+[][] \TU/lmr/m/n/10 ##
+ []
+
+[22<./Final_files/figure-latex/classical-rdd-results-and-plots-19.pdf>]
+<Final_files/figure-latex/classical-rdd-results-and-plots-21.pdf, id=211, 433.62pt x 289.08pt>
+File: Final_files/figure-latex/classical-rdd-results-and-plots-21.pdf Graphic file (type pdf)
+<use Final_files/figure-latex/classical-rdd-results-and-plots-21.pdf>
+Package luatex.def Info: Final_files/figure-latex/classical-rdd-results-and-plots-21.pdf  used on input line 597.
+(luatex.def)             Requested size: 433.61894pt x 289.07928pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 597--599
+[][] \TU/lmr/m/n/10 ##
+ []
+
+[23<./Final_files/figure-latex/classical-rdd-results-and-plots-20.pdf>]
+<Final_files/figure-latex/classical-rdd-results-and-plots-22.pdf, id=220, 433.62pt x 289.08pt>
+File: Final_files/figure-latex/classical-rdd-results-and-plots-22.pdf Graphic file (type pdf)
+<use Final_files/figure-latex/classical-rdd-results-and-plots-22.pdf>
+Package luatex.def Info: Final_files/figure-latex/classical-rdd-results-and-plots-22.pdf  used on input line 612.
+(luatex.def)             Requested size: 433.61894pt x 289.07928pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 612--614
+[][] \TU/lmr/m/n/10 ##
+ []
+
+[24<./Final_files/figure-latex/classical-rdd-results-and-plots-21.pdf>]
+<Final_files/figure-latex/classical-rdd-results-and-plots-23.pdf, id=229, 433.62pt x 289.08pt>
+File: Final_files/figure-latex/classical-rdd-results-and-plots-23.pdf Graphic file (type pdf)
+<use Final_files/figure-latex/classical-rdd-results-and-plots-23.pdf>
+Package luatex.def Info: Final_files/figure-latex/classical-rdd-results-and-plots-23.pdf  used on input line 627.
+(luatex.def)             Requested size: 433.61894pt x 289.07928pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 627--629
+[][] \TU/lmr/m/n/10 ##
+ []
+
+[25<./Final_files/figure-latex/classical-rdd-results-and-plots-22.pdf>]
+<Final_files/figure-latex/classical-rdd-results-and-plots-24.pdf, id=238, 433.62pt x 289.08pt>
+File: Final_files/figure-latex/classical-rdd-results-and-plots-24.pdf Graphic file (type pdf)
+<use Final_files/figure-latex/classical-rdd-results-and-plots-24.pdf>
+Package luatex.def Info: Final_files/figure-latex/classical-rdd-results-and-plots-24.pdf  used on input line 642.
+(luatex.def)             Requested size: 433.61894pt x 289.07928pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 642--644
+[][] \TU/lmr/m/n/10 ##
+ []
+
+[26<./Final_files/figure-latex/classical-rdd-results-and-plots-23.pdf>]
+<Final_files/figure-latex/classical-rdd-results-and-plots-25.pdf, id=247, 433.62pt x 289.08pt>
+File: Final_files/figure-latex/classical-rdd-results-and-plots-25.pdf Graphic file (type pdf)
+<use Final_files/figure-latex/classical-rdd-results-and-plots-25.pdf>
+Package luatex.def Info: Final_files/figure-latex/classical-rdd-results-and-plots-25.pdf  used on input line 657.
+(luatex.def)             Requested size: 433.61894pt x 289.07928pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 657--659
+[][] \TU/lmr/m/n/10 ##
+ []
+
+[27<./Final_files/figure-latex/classical-rdd-results-and-plots-24.pdf>]
+<Final_files/figure-latex/classical-rdd-results-and-plots-26.pdf, id=256, 433.62pt x 289.08pt>
+File: Final_files/figure-latex/classical-rdd-results-and-plots-26.pdf Graphic file (type pdf)
+<use Final_files/figure-latex/classical-rdd-results-and-plots-26.pdf>
+Package luatex.def Info: Final_files/figure-latex/classical-rdd-results-and-plots-26.pdf  used on input line 672.
+(luatex.def)             Requested size: 433.61894pt x 289.07928pt.
+[28<./Final_files/figure-latex/classical-rdd-results-and-plots-25.pdf>]
+<Final_files/figure-latex/classical-rdd-results-and-plots-27.pdf, id=265, 433.62pt x 289.08pt>
+File: Final_files/figure-latex/classical-rdd-results-and-plots-27.pdf Graphic file (type pdf)
+<use Final_files/figure-latex/classical-rdd-results-and-plots-27.pdf>
+Package luatex.def Info: Final_files/figure-latex/classical-rdd-results-and-plots-27.pdf  used on input line 687.
+(luatex.def)             Requested size: 433.61894pt x 289.07928pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 687--689
+[][] \TU/lmr/m/n/10 ##
+ []
+
+[29<./Final_files/figure-latex/classical-rdd-results-and-plots-26.pdf>]
+<Final_files/figure-latex/classical-rdd-results-and-plots-28.pdf, id=274, 433.62pt x 289.08pt>
+File: Final_files/figure-latex/classical-rdd-results-and-plots-28.pdf Graphic file (type pdf)
+<use Final_files/figure-latex/classical-rdd-results-and-plots-28.pdf>
+Package luatex.def Info: Final_files/figure-latex/classical-rdd-results-and-plots-28.pdf  used on input line 702.
+(luatex.def)             Requested size: 433.61894pt x 289.07928pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 702--704
+[][] \TU/lmr/m/n/10 ##
+ []
+
+[30<./Final_files/figure-latex/classical-rdd-results-and-plots-27.pdf>]
+<Final_files/figure-latex/classical-rdd-results-and-plots-29.pdf, id=283, 433.62pt x 289.08pt>
+File: Final_files/figure-latex/classical-rdd-results-and-plots-29.pdf Graphic file (type pdf)
+<use Final_files/figure-latex/classical-rdd-results-and-plots-29.pdf>
+Package luatex.def Info: Final_files/figure-latex/classical-rdd-results-and-plots-29.pdf  used on input line 717.
+(luatex.def)             Requested size: 433.61894pt x 289.07928pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 717--719
+[][] \TU/lmr/m/n/10 ##
+ []
+
+[31<./Final_files/figure-latex/classical-rdd-results-and-plots-28.pdf>]
+<Final_files/figure-latex/classical-rdd-results-and-plots-30.pdf, id=293, 433.62pt x 289.08pt>
+File: Final_files/figure-latex/classical-rdd-results-and-plots-30.pdf Graphic file (type pdf)
+<use Final_files/figure-latex/classical-rdd-results-and-plots-30.pdf>
+Package luatex.def Info: Final_files/figure-latex/classical-rdd-results-and-plots-30.pdf  used on input line 732.
+(luatex.def)             Requested size: 433.61894pt x 289.07928pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 732--734
+[][] \TU/lmr/m/n/10 ##
+ []
+
+[32<./Final_files/figure-latex/classical-rdd-results-and-plots-29.pdf>]
+<Final_files/figure-latex/classical-rdd-results-and-plots-31.pdf, id=302, 433.62pt x 289.08pt>
+File: Final_files/figure-latex/classical-rdd-results-and-plots-31.pdf Graphic file (type pdf)
+<use Final_files/figure-latex/classical-rdd-results-and-plots-31.pdf>
+Package luatex.def Info: Final_files/figure-latex/classical-rdd-results-and-plots-31.pdf  used on input line 747.
+(luatex.def)             Requested size: 433.61894pt x 289.07928pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 747--749
+[][] \TU/lmr/m/n/10 ##
+ []
+
+[33<./Final_files/figure-latex/classical-rdd-results-and-plots-30.pdf>]
+<Final_files/figure-latex/classical-rdd-results-and-plots-32.pdf, id=312, 433.62pt x 289.08pt>
+File: Final_files/figure-latex/classical-rdd-results-and-plots-32.pdf Graphic file (type pdf)
+<use Final_files/figure-latex/classical-rdd-results-and-plots-32.pdf>
+Package luatex.def Info: Final_files/figure-latex/classical-rdd-results-and-plots-32.pdf  used on input line 762.
+(luatex.def)             Requested size: 433.61894pt x 289.07928pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 762--764
+[][] \TU/lmr/m/n/10 ##
+ []
+
+[34<./Final_files/figure-latex/classical-rdd-results-and-plots-31.pdf>] [35<./Final_files/figure-latex/classical-rdd-results-and-plots-32.pdf>]
+
+LaTeX Font Warning: Font shape `TU/lmtt/bx/it' in size <10> not available
+(Font)              Font shape `TU/lmtt/b/sl' tried instead on input line 823.
+
+<Final_files/figure-latex/unnamed-chunk-9-1.pdf, id=330, 469.755pt x 325.215pt>
+File: Final_files/figure-latex/unnamed-chunk-9-1.pdf Graphic file (type pdf)
+<use Final_files/figure-latex/unnamed-chunk-9-1.pdf>
+Package luatex.def Info: Final_files/figure-latex/unnamed-chunk-9-1.pdf  used on input line 871.
+(luatex.def)             Requested size: 469.75386pt x 325.2142pt.
+[36] [37<./Final_files/figure-latex/unnamed-chunk-9-1.pdf>]
+<Final_files/figure-latex/unnamed-chunk-10-1.pdf, id=351, 469.755pt x 325.215pt>
+File: Final_files/figure-latex/unnamed-chunk-10-1.pdf Graphic file (type pdf)
+<use Final_files/figure-latex/unnamed-chunk-10-1.pdf>
+Package luatex.def Info: Final_files/figure-latex/unnamed-chunk-10-1.pdf  used on input line 927.
+(luatex.def)             Requested size: 469.75386pt x 325.2142pt.
+[38<./Final_files/figure-latex/unnamed-chunk-10-1.pdf>]
+<Final_files/figure-latex/unnamed-chunk-11-1.pdf, id=366, 469.755pt x 325.215pt>
+File: Final_files/figure-latex/unnamed-chunk-11-1.pdf Graphic file (type pdf)
+<use Final_files/figure-latex/unnamed-chunk-11-1.pdf>
+Package luatex.def Info: Final_files/figure-latex/unnamed-chunk-11-1.pdf  used on input line 982.
+(luatex.def)             Requested size: 469.75386pt x 325.2142pt.
+[39<./Final_files/figure-latex/unnamed-chunk-11-1.pdf>]
+<Final_files/figure-latex/unnamed-chunk-12-1.pdf, id=380, 469.755pt x 325.215pt>
+File: Final_files/figure-latex/unnamed-chunk-12-1.pdf Graphic file (type pdf)
+<use Final_files/figure-latex/unnamed-chunk-12-1.pdf>
+Package luatex.def Info: Final_files/figure-latex/unnamed-chunk-12-1.pdf  used on input line 1037.
+(luatex.def)             Requested size: 469.75386pt x 325.2142pt.
+[40] [41<./Final_files/figure-latex/unnamed-chunk-12-1.pdf>]
+<Final_files/figure-latex/unnamed-chunk-13-1.pdf, id=401, 469.755pt x 325.215pt>
+File: Final_files/figure-latex/unnamed-chunk-13-1.pdf Graphic file (type pdf)
+<use Final_files/figure-latex/unnamed-chunk-13-1.pdf>
+Package luatex.def Info: Final_files/figure-latex/unnamed-chunk-13-1.pdf  used on input line 1090.
+(luatex.def)             Requested size: 469.75386pt x 325.2142pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 1090--1093
+[][]
+ []
+
+[42<./Final_files/figure-latex/unnamed-chunk-13-1.pdf>]
+<Final_files/figure-latex/unnamed-chunk-14-1.pdf, id=415, 469.755pt x 325.215pt>
+File: Final_files/figure-latex/unnamed-chunk-14-1.pdf Graphic file (type pdf)
+<use Final_files/figure-latex/unnamed-chunk-14-1.pdf>
+Package luatex.def Info: Final_files/figure-latex/unnamed-chunk-14-1.pdf  used on input line 1141.
+(luatex.def)             Requested size: 469.75386pt x 325.2142pt.
+[43<./Final_files/figure-latex/unnamed-chunk-14-1.pdf>]
+<Final_files/figure-latex/unnamed-chunk-15-1.pdf, id=430, 469.755pt x 325.215pt>
+File: Final_files/figure-latex/unnamed-chunk-15-1.pdf Graphic file (type pdf)
+<use Final_files/figure-latex/unnamed-chunk-15-1.pdf>
+Package luatex.def Info: Final_files/figure-latex/unnamed-chunk-15-1.pdf  used on input line 1193.
+(luatex.def)             Requested size: 469.75386pt x 325.2142pt.
+[44<./Final_files/figure-latex/unnamed-chunk-15-1.pdf>]
+<Final_files/figure-latex/unnamed-chunk-16-1.pdf, id=446, 469.755pt x 325.215pt>
+File: Final_files/figure-latex/unnamed-chunk-16-1.pdf Graphic file (type pdf)
+<use Final_files/figure-latex/unnamed-chunk-16-1.pdf>
+Package luatex.def Info: Final_files/figure-latex/unnamed-chunk-16-1.pdf  used on input line 1245.
+(luatex.def)             Requested size: 469.75386pt x 325.2142pt.
+[45<./Final_files/figure-latex/unnamed-chunk-16-1.pdf>]
+<Final_files/figure-latex/unnamed-chunk-17-1.pdf, id=460, 469.755pt x 325.215pt>
+File: Final_files/figure-latex/unnamed-chunk-17-1.pdf Graphic file (type pdf)
+<use Final_files/figure-latex/unnamed-chunk-17-1.pdf>
+Package luatex.def Info: Final_files/figure-latex/unnamed-chunk-17-1.pdf  used on input line 1292.
+(luatex.def)             Requested size: 469.75386pt x 325.2142pt.
+[46<./Final_files/figure-latex/unnamed-chunk-17-1.pdf>]
+<Final_files/figure-latex/unnamed-chunk-18-1.pdf, id=475, 469.755pt x 325.215pt>
+File: Final_files/figure-latex/unnamed-chunk-18-1.pdf Graphic file (type pdf)
+<use Final_files/figure-latex/unnamed-chunk-18-1.pdf>
+Package luatex.def Info: Final_files/figure-latex/unnamed-chunk-18-1.pdf  used on input line 1339.
+(luatex.def)             Requested size: 469.75386pt x 325.2142pt.
+[47<./Final_files/figure-latex/unnamed-chunk-18-1.pdf>]
+<Final_files/figure-latex/unnamed-chunk-19-1.pdf, id=490, 469.755pt x 325.215pt>
+File: Final_files/figure-latex/unnamed-chunk-19-1.pdf Graphic file (type pdf)
+<use Final_files/figure-latex/unnamed-chunk-19-1.pdf>
+Package luatex.def Info: Final_files/figure-latex/unnamed-chunk-19-1.pdf  used on input line 1386.
+(luatex.def)             Requested size: 469.75386pt x 325.2142pt.
+[48<./Final_files/figure-latex/unnamed-chunk-19-1.pdf>]
+<Final_files/figure-latex/unnamed-chunk-20-1.pdf, id=505, 469.755pt x 325.215pt>
+File: Final_files/figure-latex/unnamed-chunk-20-1.pdf Graphic file (type pdf)
+<use Final_files/figure-latex/unnamed-chunk-20-1.pdf>
+Package luatex.def Info: Final_files/figure-latex/unnamed-chunk-20-1.pdf  used on input line 1433.
+(luatex.def)             Requested size: 469.75386pt x 325.2142pt.
+[49<./Final_files/figure-latex/unnamed-chunk-20-1.pdf>]
+<Final_files/figure-latex/unnamed-chunk-21-1.pdf, id=520, 469.755pt x 325.215pt>
+File: Final_files/figure-latex/unnamed-chunk-21-1.pdf Graphic file (type pdf)
+<use Final_files/figure-latex/unnamed-chunk-21-1.pdf>
+Package luatex.def Info: Final_files/figure-latex/unnamed-chunk-21-1.pdf  used on input line 1480.
+(luatex.def)             Requested size: 469.75386pt x 325.2142pt.
+[50<./Final_files/figure-latex/unnamed-chunk-21-1.pdf>]
+<Final_files/figure-latex/unnamed-chunk-22-1.pdf, id=535, 469.755pt x 325.215pt>
+File: Final_files/figure-latex/unnamed-chunk-22-1.pdf Graphic file (type pdf)
+<use Final_files/figure-latex/unnamed-chunk-22-1.pdf>
+Package luatex.def Info: Final_files/figure-latex/unnamed-chunk-22-1.pdf  used on input line 1527.
+(luatex.def)             Requested size: 469.75386pt x 325.2142pt.
+[51<./Final_files/figure-latex/unnamed-chunk-22-1.pdf>]
+<Final_files/figure-latex/unnamed-chunk-23-1.pdf, id=551, 469.755pt x 325.215pt>
+File: Final_files/figure-latex/unnamed-chunk-23-1.pdf Graphic file (type pdf)
+<use Final_files/figure-latex/unnamed-chunk-23-1.pdf>
+Package luatex.def Info: Final_files/figure-latex/unnamed-chunk-23-1.pdf  used on input line 1574.
+(luatex.def)             Requested size: 469.75386pt x 325.2142pt.
+[52<./Final_files/figure-latex/unnamed-chunk-23-1.pdf>]
+<Final_files/figure-latex/unnamed-chunk-24-1.pdf, id=566, 469.755pt x 325.215pt>
+File: Final_files/figure-latex/unnamed-chunk-24-1.pdf Graphic file (type pdf)
+<use Final_files/figure-latex/unnamed-chunk-24-1.pdf>
+Package luatex.def Info: Final_files/figure-latex/unnamed-chunk-24-1.pdf  used on input line 1621.
+(luatex.def)             Requested size: 469.75386pt x 325.2142pt.
+[53<./Final_files/figure-latex/unnamed-chunk-24-1.pdf>]
+<Final_files/figure-latex/unnamed-chunk-25-1.pdf, id=582, 469.755pt x 325.215pt>
+File: Final_files/figure-latex/unnamed-chunk-25-1.pdf Graphic file (type pdf)
+<use Final_files/figure-latex/unnamed-chunk-25-1.pdf>
+Package luatex.def Info: Final_files/figure-latex/unnamed-chunk-25-1.pdf  used on input line 1668.
+(luatex.def)             Requested size: 469.75386pt x 325.2142pt.
+[54<./Final_files/figure-latex/unnamed-chunk-25-1.pdf>]
+<Final_files/figure-latex/unnamed-chunk-26-1.pdf, id=597, 469.755pt x 325.215pt>
+File: Final_files/figure-latex/unnamed-chunk-26-1.pdf Graphic file (type pdf)
+<use Final_files/figure-latex/unnamed-chunk-26-1.pdf>
+Package luatex.def Info: Final_files/figure-latex/unnamed-chunk-26-1.pdf  used on input line 1715.
+(luatex.def)             Requested size: 469.75386pt x 325.2142pt.
+[55<./Final_files/figure-latex/unnamed-chunk-26-1.pdf>]
+<Final_files/figure-latex/unnamed-chunk-27-1.pdf, id=612, 469.755pt x 325.215pt>
+File: Final_files/figure-latex/unnamed-chunk-27-1.pdf Graphic file (type pdf)
+<use Final_files/figure-latex/unnamed-chunk-27-1.pdf>
+Package luatex.def Info: Final_files/figure-latex/unnamed-chunk-27-1.pdf  used on input line 1762.
+(luatex.def)             Requested size: 469.75386pt x 325.2142pt.
+[56<./Final_files/figure-latex/unnamed-chunk-27-1.pdf>]
+<Final_files/figure-latex/unnamed-chunk-28-1.pdf, id=627, 469.755pt x 325.215pt>
+File: Final_files/figure-latex/unnamed-chunk-28-1.pdf Graphic file (type pdf)
+<use Final_files/figure-latex/unnamed-chunk-28-1.pdf>
+Package luatex.def Info: Final_files/figure-latex/unnamed-chunk-28-1.pdf  used on input line 1809.
+(luatex.def)             Requested size: 469.75386pt x 325.2142pt.
+[57<./Final_files/figure-latex/unnamed-chunk-28-1.pdf>]
+<Final_files/figure-latex/unnamed-chunk-29-1.pdf, id=642, 469.755pt x 325.215pt>
+File: Final_files/figure-latex/unnamed-chunk-29-1.pdf Graphic file (type pdf)
+<use Final_files/figure-latex/unnamed-chunk-29-1.pdf>
+Package luatex.def Info: Final_files/figure-latex/unnamed-chunk-29-1.pdf  used on input line 1856.
+(luatex.def)             Requested size: 469.75386pt x 325.2142pt.
+[58<./Final_files/figure-latex/unnamed-chunk-29-1.pdf>]
+<Final_files/figure-latex/unnamed-chunk-30-1.pdf, id=657, 469.755pt x 325.215pt>
+File: Final_files/figure-latex/unnamed-chunk-30-1.pdf Graphic file (type pdf)
+<use Final_files/figure-latex/unnamed-chunk-30-1.pdf>
+Package luatex.def Info: Final_files/figure-latex/unnamed-chunk-30-1.pdf  used on input line 1903.
+(luatex.def)             Requested size: 469.75386pt x 325.2142pt.
+[59<./Final_files/figure-latex/unnamed-chunk-30-1.pdf>]
+<Final_files/figure-latex/unnamed-chunk-31-1.pdf, id=672, 469.755pt x 325.215pt>
+File: Final_files/figure-latex/unnamed-chunk-31-1.pdf Graphic file (type pdf)
+<use Final_files/figure-latex/unnamed-chunk-31-1.pdf>
+Package luatex.def Info: Final_files/figure-latex/unnamed-chunk-31-1.pdf  used on input line 1950.
+(luatex.def)             Requested size: 469.75386pt x 325.2142pt.
+[60<./Final_files/figure-latex/unnamed-chunk-31-1.pdf>]
+<Final_files/figure-latex/unnamed-chunk-32-1.pdf, id=687, 469.755pt x 325.215pt>
+File: Final_files/figure-latex/unnamed-chunk-32-1.pdf Graphic file (type pdf)
+<use Final_files/figure-latex/unnamed-chunk-32-1.pdf>
+Package luatex.def Info: Final_files/figure-latex/unnamed-chunk-32-1.pdf  used on input line 1997.
+(luatex.def)             Requested size: 469.75386pt x 325.2142pt.
+[61<./Final_files/figure-latex/unnamed-chunk-32-1.pdf>]
+<Final_files/figure-latex/unnamed-chunk-33-1.pdf, id=704, 469.755pt x 325.215pt>
+File: Final_files/figure-latex/unnamed-chunk-33-1.pdf Graphic file (type pdf)
+<use Final_files/figure-latex/unnamed-chunk-33-1.pdf>
+Package luatex.def Info: Final_files/figure-latex/unnamed-chunk-33-1.pdf  used on input line 2044.
+(luatex.def)             Requested size: 469.75386pt x 325.2142pt.
+[62<./Final_files/figure-latex/unnamed-chunk-33-1.pdf>]
+<Final_files/figure-latex/unnamed-chunk-34-1.pdf, id=719, 469.755pt x 325.215pt>
+File: Final_files/figure-latex/unnamed-chunk-34-1.pdf Graphic file (type pdf)
+<use Final_files/figure-latex/unnamed-chunk-34-1.pdf>
+Package luatex.def Info: Final_files/figure-latex/unnamed-chunk-34-1.pdf  used on input line 2091.
+(luatex.def)             Requested size: 469.75386pt x 325.2142pt.
+[63<./Final_files/figure-latex/unnamed-chunk-34-1.pdf>]
+<Final_files/figure-latex/unnamed-chunk-35-1.pdf, id=734, 469.755pt x 325.215pt>
+File: Final_files/figure-latex/unnamed-chunk-35-1.pdf Graphic file (type pdf)
+<use Final_files/figure-latex/unnamed-chunk-35-1.pdf>
+Package luatex.def Info: Final_files/figure-latex/unnamed-chunk-35-1.pdf  used on input line 2138.
+(luatex.def)             Requested size: 469.75386pt x 325.2142pt.
+[64<./Final_files/figure-latex/unnamed-chunk-35-1.pdf>]
+<Final_files/figure-latex/unnamed-chunk-36-1.pdf, id=749, 469.755pt x 325.215pt>
+File: Final_files/figure-latex/unnamed-chunk-36-1.pdf Graphic file (type pdf)
+<use Final_files/figure-latex/unnamed-chunk-36-1.pdf>
+Package luatex.def Info: Final_files/figure-latex/unnamed-chunk-36-1.pdf  used on input line 2185.
+(luatex.def)             Requested size: 469.75386pt x 325.2142pt.
+[65<./Final_files/figure-latex/unnamed-chunk-36-1.pdf>]
+<Final_files/figure-latex/unnamed-chunk-37-1.pdf, id=764, 469.755pt x 325.215pt>
+File: Final_files/figure-latex/unnamed-chunk-37-1.pdf Graphic file (type pdf)
+<use Final_files/figure-latex/unnamed-chunk-37-1.pdf>
+Package luatex.def Info: Final_files/figure-latex/unnamed-chunk-37-1.pdf  used on input line 2232.
+(luatex.def)             Requested size: 469.75386pt x 325.2142pt.
+[66<./Final_files/figure-latex/unnamed-chunk-37-1.pdf>]
+<Final_files/figure-latex/unnamed-chunk-38-1.pdf, id=779, 469.755pt x 325.215pt>
+File: Final_files/figure-latex/unnamed-chunk-38-1.pdf Graphic file (type pdf)
+<use Final_files/figure-latex/unnamed-chunk-38-1.pdf>
+Package luatex.def Info: Final_files/figure-latex/unnamed-chunk-38-1.pdf  used on input line 2279.
+(luatex.def)             Requested size: 469.75386pt x 325.2142pt.
+[67<./Final_files/figure-latex/unnamed-chunk-38-1.pdf>]
+<Final_files/figure-latex/unnamed-chunk-39-1.pdf, id=794, 469.755pt x 325.215pt>
+File: Final_files/figure-latex/unnamed-chunk-39-1.pdf Graphic file (type pdf)
+<use Final_files/figure-latex/unnamed-chunk-39-1.pdf>
+Package luatex.def Info: Final_files/figure-latex/unnamed-chunk-39-1.pdf  used on input line 2326.
+(luatex.def)             Requested size: 469.75386pt x 325.2142pt.
+[68<./Final_files/figure-latex/unnamed-chunk-39-1.pdf>]
+<Final_files/figure-latex/unnamed-chunk-40-1.pdf, id=809, 469.755pt x 325.215pt>
+File: Final_files/figure-latex/unnamed-chunk-40-1.pdf Graphic file (type pdf)
+<use Final_files/figure-latex/unnamed-chunk-40-1.pdf>
+Package luatex.def Info: Final_files/figure-latex/unnamed-chunk-40-1.pdf  used on input line 2373.
+(luatex.def)             Requested size: 469.75386pt x 325.2142pt.
+[69<./Final_files/figure-latex/unnamed-chunk-40-1.pdf>]
+<Final_files/figure-latex/unnamed-chunk-41-1.pdf, id=825, 469.755pt x 325.215pt>
+File: Final_files/figure-latex/unnamed-chunk-41-1.pdf Graphic file (type pdf)
+<use Final_files/figure-latex/unnamed-chunk-41-1.pdf>
+Package luatex.def Info: Final_files/figure-latex/unnamed-chunk-41-1.pdf  used on input line 2420.
+(luatex.def)             Requested size: 469.75386pt x 325.2142pt.
+[70<./Final_files/figure-latex/unnamed-chunk-41-1.pdf>]
+<Final_files/figure-latex/unnamed-chunk-42-1.pdf, id=840, 469.755pt x 325.215pt>
+File: Final_files/figure-latex/unnamed-chunk-42-1.pdf Graphic file (type pdf)
+<use Final_files/figure-latex/unnamed-chunk-42-1.pdf>
+Package luatex.def Info: Final_files/figure-latex/unnamed-chunk-42-1.pdf  used on input line 2467.
+(luatex.def)             Requested size: 469.75386pt x 325.2142pt.
+[71<./Final_files/figure-latex/unnamed-chunk-42-1.pdf>]
+<Final_files/figure-latex/unnamed-chunk-43-1.pdf, id=856, 469.755pt x 325.215pt>
+File: Final_files/figure-latex/unnamed-chunk-43-1.pdf Graphic file (type pdf)
+<use Final_files/figure-latex/unnamed-chunk-43-1.pdf>
+Package luatex.def Info: Final_files/figure-latex/unnamed-chunk-43-1.pdf  used on input line 2514.
+(luatex.def)             Requested size: 469.75386pt x 325.2142pt.
+[72<./Final_files/figure-latex/unnamed-chunk-43-1.pdf>]
+<Final_files/figure-latex/unnamed-chunk-44-1.pdf, id=871, 469.755pt x 325.215pt>
+File: Final_files/figure-latex/unnamed-chunk-44-1.pdf Graphic file (type pdf)
+<use Final_files/figure-latex/unnamed-chunk-44-1.pdf>
+Package luatex.def Info: Final_files/figure-latex/unnamed-chunk-44-1.pdf  used on input line 2561.
+(luatex.def)             Requested size: 469.75386pt x 325.2142pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 2561--2563
+[][]
+ []
+
+[73<./Final_files/figure-latex/unnamed-chunk-44-1.pdf>] [74] [75
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+] [76] [77]
+LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(1)/m/n' will be
+(Font)              scaled to size 14.4pt on input line 2832.
+LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(2)/m/n' will be
+(Font)              scaled to size 14.4pt on input line 2832.
+LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(3)/m/n' will be
+(Font)              scaled to size 14.4pt on input line 2832.
+[78
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+Missing character: There is no ─ (U+2500) in font [lmmono10-italic]:!
+]
+Overfull \hbox (102.49498pt too wide) in paragraph at lines 3150--3150
+[]\TU/lmtt/m/n/10 ## e.g. fit <- gpss(Y~X)to extract SEs of fitted values: sqrt(diag(fit$post_cov_orig))Basic Model Information[] 
+ []
+
+[79]
+Overfull \hbox (102.49498pt too wide) in paragraph at lines 3150--3150
+[]\TU/lmtt/m/n/10 ## e.g. fit <- gpss(Y~X)to extract SEs of fitted values: sqrt(diag(fit$post_cov_orig))Basic Model Information[] 
+ []
+
+
+Overfull \hbox (102.49498pt too wide) in paragraph at lines 3150--3150
+[]\TU/lmtt/m/n/10 ## e.g. fit <- gpss(Y~X)to extract SEs of fitted values: sqrt(diag(fit$post_cov_orig))Basic Model Information[] 
+ []
+
+
+Overfull \hbox (102.49498pt too wide) in paragraph at lines 3150--3150
+[]\TU/lmtt/m/n/10 ## e.g. fit <- gpss(Y~X)to extract SEs of fitted values: sqrt(diag(fit$post_cov_orig))Basic Model Information[] 
+ []
+
+[80]
+Overfull \hbox (102.49498pt too wide) in paragraph at lines 3150--3150
+[]\TU/lmtt/m/n/10 ## e.g. fit <- gpss(Y~X)to extract SEs of fitted values: sqrt(diag(fit$post_cov_orig))Basic Model Information[] 
+ []
+
+
+Overfull \hbox (102.49498pt too wide) in paragraph at lines 3150--3150
+[]\TU/lmtt/m/n/10 ## e.g. fit <- gpss(Y~X)to extract SEs of fitted values: sqrt(diag(fit$post_cov_orig))Basic Model Information[] 
+ []
+
+
+Overfull \hbox (102.49498pt too wide) in paragraph at lines 3150--3150
+[]\TU/lmtt/m/n/10 ## e.g. fit <- gpss(Y~X)to extract SEs of fitted values: sqrt(diag(fit$post_cov_orig))Basic Model Information[] 
+ []
+
+
+Overfull \hbox (102.49498pt too wide) in paragraph at lines 3150--3150
+[]\TU/lmtt/m/n/10 ## e.g. fit <- gpss(Y~X)to extract SEs of fitted values: sqrt(diag(fit$post_cov_orig))Basic Model Information[] 
+ []
+
+[81]
+Overfull \hbox (102.49498pt too wide) in paragraph at lines 3150--3150
+[]\TU/lmtt/m/n/10 ## e.g. fit <- gpss(Y~X)to extract SEs of fitted values: sqrt(diag(fit$post_cov_orig))Basic Model Information[] 
+ []
+
+
+Overfull \hbox (102.49498pt too wide) in paragraph at lines 3150--3150
+[]\TU/lmtt/m/n/10 ## e.g. fit <- gpss(Y~X)to extract SEs of fitted values: sqrt(diag(fit$post_cov_orig))Basic Model Information[] 
+ []
+
+
+Overfull \hbox (102.49498pt too wide) in paragraph at lines 3150--3150
+[]\TU/lmtt/m/n/10 ## e.g. fit <- gpss(Y~X)to extract SEs of fitted values: sqrt(diag(fit$post_cov_orig))Basic Model Information[] 
+ []
+
+[82]
+Overfull \hbox (102.49498pt too wide) in paragraph at lines 3150--3150
+[]\TU/lmtt/m/n/10 ## e.g. fit <- gpss(Y~X)to extract SEs of fitted values: sqrt(diag(fit$post_cov_orig))Basic Model Information[] 
+ []
+
+
+Overfull \hbox (102.49498pt too wide) in paragraph at lines 3150--3150
+[]\TU/lmtt/m/n/10 ## e.g. fit <- gpss(Y~X)to extract SEs of fitted values: sqrt(diag(fit$post_cov_orig))Basic Model Information[] 
+ []
+
+
+Overfull \hbox (102.49498pt too wide) in paragraph at lines 3150--3150
+[]\TU/lmtt/m/n/10 ## e.g. fit <- gpss(Y~X)to extract SEs of fitted values: sqrt(diag(fit$post_cov_orig))Basic Model Information[] 
+ []
+
+
+Overfull \hbox (102.49498pt too wide) in paragraph at lines 3150--3150
+[]\TU/lmtt/m/n/10 ## e.g. fit <- gpss(Y~X)to extract SEs of fitted values: sqrt(diag(fit$post_cov_orig))Basic Model Information[] 
+ []
+
+[83] [84] [85] [86] (./Final.aux)
+ ***********
+LaTeX2e <2023-11-01> patch level 1
+L3 programming layer <2024-05-08>
+ ***********
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
+)
+
+Here is how much of LuaTeX's memory you used:
+ 18661 strings out of 476324
+ 125027,1977958 words of node,token memory allocated
+ 646 words of node memory still in use:
+   13 hlist, 2 vlist, 3 rule, 4 glue, 5 kern, 1 glyph, 14 attribute, 57 glue_spec, 14 attribute_list, 1 write, 1 pdf_action, 2 pdf_colorstack nodes
+   avail lists: 2:2115,3:2496,4:464,5:745,6:109,7:7807,8:131,9:579,10:8,11:157
+ 40298 multiletter control sequences out of 65536+600000
+ 72 fonts using 22035207 bytes
+ 90i,6n,123p,884b,446s stack positions out of 10000i,1000n,20000p,200000b,200000s
+</Users/devinreeh/Library/TinyTeX/texmf-dist/fonts/opentype/public/lm-math/latinmodern-math.otf></Users/devinreeh/Library/TinyTeX/texmf-dist/fonts/opentype/public/lm/lmmonolt10-boldoblique.otf></Users/devinreeh/Library/TinyTeX/texmf-dist/fonts/opentype/public/lm/lmmono10-italic.otf></Users/devinreeh/Library/TinyTeX/texmf-dist/fonts/opentype/public/lm/lmmonolt10-bold.otf></Users/devinreeh/Library/TinyTeX/texmf-dist/fonts/opentype/public/lm/lmmono10-regular.otf></Users/devinreeh/Library/TinyTeX/texmf-dist/fonts/opentype/public/lm/lmroman10-bold.otf></Users/devinreeh/Library/TinyTeX/texmf-dist/fonts/opentype/public/lm/lmroman10-regular.otf></Users/devinreeh/Library/TinyTeX/texmf-dist/fonts/opentype/public/lm/lmroman12-bold.otf></Users/devinreeh/Library/TinyTeX/texmf-dist/fonts/opentype/public/lm/lmroman12-regular.otf></Users/devinreeh/Library/TinyTeX/texmf-dist/fonts/opentype/public/lm/lmroman17-regular.otf>
+Output written on Final.pdf (86 pages, 2816664 bytes).
+
+PDF statistics: 1142 PDF objects out of 1200 (max. 8388607)
+ 879 compressed objects within 9 object streams
+ 129 named destinations out of 1000 (max. 131072)
+ 337 words of extra memory for PDF output out of 10000 (max. 100000000)
+

@@ -1,0 +1,446 @@
+---
+title: "MAS_Prelim_Results"
+author: "Devin Reeh"
+date: "2025-05-27"
+output:
+  pdf_document:
+    latex_engine: lualatex
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r, echo=FALSE, results='hide', warning=FALSE}
+# ──────────────────────────────────────────────────────────────
+# 0.  Load packages
+# ──────────────────────────────────────────────────────────────
+# install.packages(c("readxl", "dplyr"))
+library(readxl)
+library(dplyr)
+library(stringr)
+
+
+# ──────────────────────────────────────────────────────────────
+# 1.  FRPM 2021-22  →  frpm_lausd (clean names)
+# ──────────────────────────────────────────────────────────────
+frpm_path <- "~/Downloads/frpm2122_v2.xlsx"
+
+# If the FRPM sheet name is uncertain, take the 2nd sheet (adjust if needed)
+frpm_raw <- read_excel(frpm_path, sheet = 2, skip = 1)
+
+# Explicit column rename vector  (index order must match colnames(frpm_raw))
+names(frpm_raw) <- c(
+  "academic_year",
+  "county_code",
+  "district_code",
+  "school_code",
+  "county_name",
+  "district_name",
+  "school_name",
+  "district_type",
+  "school_type",
+  "educational_option_type",
+  "nslp_provision_status",
+  "charter_school_yn",
+  "charter_school_number",
+  "charter_funding_type",
+  "irc",
+  "low_grade",
+  "high_grade",
+  "enrollment_k_12",
+  "free_meal_count_k_12",
+  "percent_eligible_free_k_12",
+  "frpm_count_k_12",
+  "percent_eligible_frpm_k_12",
+  "enrollment_5_17",
+  "free_meal_count_5_17",
+  "percent_eligible_free_5_17",
+  "frpm_count_5_17",
+  "frpm_rate",                      # running variable
+  "calpads_cert_status"
+)
+
+frpm_lausd <- frpm_raw %>%
+  filter(district_name == "Los Angeles Unified") %>%
+  select(school_name, school_code, frpm_rate) %>%
+  mutate(
+    school_name = toupper(trimws(school_name)),
+    frpm_rate   = as.numeric(frpm_rate),
+    schoolcode = as.character(school_code)
+  )
+
+# ──────────────────────────────────────────────────────────────
+# 2.  Chronic Absenteeism TXT  →  attendance_lausd
+# ──────────────────────────────────────────────────────────────
+att_path <- "~/Downloads/chronicabsenteeism22-v3.txt"
+
+att_raw <- read.delim(att_path, sep = "\t", quote = "\"", stringsAsFactors = FALSE)
+
+# Minimal rename for needed columns
+names(att_raw)[ names(att_raw) == "District.Name"            ] <- "district_name"
+names(att_raw)[ names(att_raw) == "School.Name"              ] <- "school_name"
+names(att_raw)[ names(att_raw) == "School.Code"              ] <- "school_code"
+names(att_raw)[ names(att_raw) == "ChronicAbsenteeismRate"   ] <- "chronic_absenteeism"
+
+
+attendance_lausd <- att_raw %>%
+  filter(district_name == "Los Angeles Unified") %>%
+  mutate(
+    school_code = as.character(school_code),
+    chronic_absenteeism  = as.numeric(na_if(chronic_absenteeism, '*')),
+    ChronicAbsenteeismEligibleCumulativeEnrollment = as.numeric(na_if(ChronicAbsenteeismEligibleCumulativeEnrollment, '*')),
+    ChronicAbsenteeismCount = as.numeric(na_if(ChronicAbsenteeismCount, '*')),
+  )
+
+# ──────────────────────────────────────────────────────────────
+# 3.  Merge  +  create RDD vars
+# ──────────────────────────────────────────────────────────────
+merged <- inner_join(frpm_lausd, attendance_lausd, by = "school_code") %>%
+  mutate(
+    treated = ifelse(frpm_rate >= 0.75, 1, 0),
+    running = frpm_rate - 0.75
+  )
+
+# ──────────────────────────────────────────────────────────────
+# 4.  Beyond-the-Bell  →  add btb_participation
+# ──────────────────────────────────────────────────────────────
+btb_path <- "~/Downloads/BeyondTheBellSchoolSitePrograms-20212022 copy.csv"
+btb_raw  <- read.csv(btb_path, stringsAsFactors = FALSE)
+
+# Rename the single column we need
+names(btb_raw)[ names(btb_raw) == "School" ] <- "school_name"
+
+
+btb_clean <- btb_raw %>%
+  mutate(
+    btb_am = ifelse(is.na(BeforeSchoolGrantProgram), 0, 1),
+    btb_pm = ifelse(is.na(AfterSchoolGeneralFundedPrograms) | is.na(AfterSchoolGrantProgram), 0, 1),
+    CDSCode = as.character(CDSCode),
+    school_code = str_sub(CDSCode, -7)
+  )
+
+# btb_clean %>%
+#   count(school_code) %>%
+#   filter(n > 1)
+
+btb_unique <- btb_clean %>%
+  group_by(school_code) %>%
+  summarise(
+    SchoolYear = first(SchoolYear),  # or customize how you want to handle it
+    BeforeSchoolGrantProgram = as.integer(any(!is.na(BeforeSchoolGrantProgram))),
+    AfterSchoolGeneralFundedPrograms = as.integer(any(!is.na(AfterSchoolGeneralFundedPrograms))),
+    btb_participation = ifelse(BeforeSchoolGrantProgram || AfterSchoolGeneralFundedPrograms, 1, 0)
+  )
+
+merged <- merged %>%
+  left_join(btb_unique, by = "school_code")
+names(merged)
+```
+
+```{r, echo=FALSE, results='hide', warning=FALSE}
+# install.packages(c("rdrobust", "rddensity", "ggplot2"))
+library(rdrobust)
+library(rddensity)
+library(ggplot2)
+
+# If you just ran the script above you already have `merged`
+data <- merged
+
+
+```
+
+```{r, echo=FALSE, results='hide', warning=FALSE}
+data
+
+
+filtered_data <- data %>%
+  filter(frpm_rate >= 0.7, frpm_rate <= 0.8, btb_participation == 1)
+
+data %>%
+  filter(frpm_rate > 0.75) %>%
+  summarise(
+    participated = sum(btb_participation == 1, na.rm = TRUE),
+    not_participated = sum(btb_participation == 0, na.rm = TRUE),
+    missing = sum(is.na(btb_participation))
+  )
+
+data %>%
+  filter(frpm_rate <= 0.75, frpm_rate >= 0.7) %>%
+  summarise(
+    participated = sum(btb_participation == 1, na.rm = TRUE),
+    not_participated = sum(btb_participation == 0, na.rm = TRUE),
+    missing = sum(is.na(btb_participation))
+  )
+
+filtered_data
+```
+```{r, echo=FALSE, results='hide', warning=FALSE}
+library(rdrobust)
+library(rddensity)
+
+merged <- merged %>%
+  mutate(
+    frpm_rate = ifelse(frpm_rate <= 1, frpm_rate * 100, frpm_rate),
+    running   = frpm_rate - 75,
+    treated   = ifelse(frpm_rate >= 75, 1, 0)
+  )
+
+# ggplot(merged, aes(frpm_rate, chronic_absenteeism)) +
+#   geom_point(alpha = .4) +
+#   geom_vline(xintercept = 75, linetype = "dashed") +
+#   labs(x = "FRPM eligibility rate (%)",
+#        y = "Chronic absenteeism rate (%)")
+
+```
+# I. Identify Treatment Assignment and Outcome Variables
+This study defines treatment as school participation in either the free meal program or the Beyond the Bell (BTB) afterschool program, based on FRPM eligibility thresholds. The sole outcome examined is chronic absenteeism, measured as the percentage of students missing 10% or more of the school year. Clearly defining both treatment and outcome enables a causal comparison between schools just above and below the FRPM cutoff, where access to these programs changes. This setup supports the core research question: whether program participation leads to differences in absenteeism rates.
+
+
+# II. Estimate the Treatment Effect with Local Linear Regression
+
+
+```{r}
+# 2. Sharp RD estimate
+rd75 <- rdrobust(merged$chronic_absenteeism,
+                 merged$frpm_rate,
+                 c          = 75,
+                 masspoints = "adjust")
+summary(rd75)
+```
+
+
+# III. Choose and Justify Bandwidth
+```{r}
+# Load package
+library(rdrobust)
+
+# Declare models
+m1  <- rdrobust(merged$chronic_absenteeism, merged$frpm_rate, c = 75, h = 2, p = 1, masspoints = "adjust")
+m2  <- rdrobust(merged$chronic_absenteeism, merged$frpm_rate, c = 75, h = 2, p = 2, masspoints = "adjust")
+m3  <- rdrobust(merged$chronic_absenteeism, merged$frpm_rate, c = 75, h = 2, p = 3, masspoints = "adjust")
+m4  <- rdrobust(merged$chronic_absenteeism, merged$frpm_rate, c = 75, h = 3, p = 1, masspoints = "adjust")
+m5  <- rdrobust(merged$chronic_absenteeism, merged$frpm_rate, c = 75, h = 3, p = 2, masspoints = "adjust")
+m6  <- rdrobust(merged$chronic_absenteeism, merged$frpm_rate, c = 75, h = 3, p = 3, masspoints = "adjust")
+m7  <- rdrobust(merged$chronic_absenteeism, merged$frpm_rate, c = 75, h = 4, p = 1, masspoints = "adjust")
+m8  <- rdrobust(merged$chronic_absenteeism, merged$frpm_rate, c = 75, h = 4, p = 2, masspoints = "adjust")
+m9  <- rdrobust(merged$chronic_absenteeism, merged$frpm_rate, c = 75, h = 4, p = 3, masspoints = "adjust")
+m10 <- rdrobust(merged$chronic_absenteeism, merged$frpm_rate, c = 75, h = 5, p = 1, masspoints = "adjust")
+m11 <- rdrobust(merged$chronic_absenteeism, merged$frpm_rate, c = 75, h = 5, p = 2, masspoints = "adjust")
+m12 <- rdrobust(merged$chronic_absenteeism, merged$frpm_rate, c = 75, h = 5, p = 3, masspoints = "adjust")
+m13 <- rdrobust(merged$chronic_absenteeism, merged$frpm_rate, c = 75, h = 6, p = 1, masspoints = "adjust")
+m14 <- rdrobust(merged$chronic_absenteeism, merged$frpm_rate, c = 75, h = 6, p = 2, masspoints = "adjust")
+m15 <- rdrobust(merged$chronic_absenteeism, merged$frpm_rate, c = 75, h = 6, p = 3, masspoints = "adjust")
+
+# Store models with correct metadata manually
+model_info <- data.frame(
+  name = paste0("m", 1:15),
+  cutoff = 75,
+  bandwidth = rep(2:6, each = 3),
+  poly_order = rep(1:3, times = 5),
+  stringsAsFactors = FALSE
+)
+
+models <- list(m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12, m13, m14, m15)
+
+# Extract results and build table
+robust_results <- do.call(rbind, Map(function(model, info) {
+  data.frame(
+    cutoff = info$cutoff,
+    bandwidth = info$bandwidth,
+    poly_order = info$poly_order,
+    coef = model$coef[1, 1],
+    se = model$se[1, 1],
+    pval = model$pv[1, 1],
+    ci_lower = model$ci[1, 1],
+    ci_upper = model$ci[1, 2]
+  )
+}, models, split(model_info, seq(nrow(model_info)))))
+
+# Show result
+print(robust_results)
+
+bw <- rdbwselect(merged$chronic_absenteeism, merged$frpm_rate, c = 75)
+summary(bw)
+```
+
+
+# V. Interpret and Contextualize the Results
+This means the optimal comparison window is ±4.443 percentage points around the cutoff — i.e., schools with FRPM between 70.56% and 79.44%.
+
+```{r}
+main <- rdrobust(merged$chronic_absenteeism, merged$frpm_rate, c = 75, h = 4.443, p = 1, masspoints = "adjust")
+summary(main)
+```
+
+# VI. Visualize the Discontinuity (RDD Plots)
+
+## Identification: Quick Visual Check
+- Schools with similar FRPM can have different absenteeism — typical heterogeneity.
+- The dashed line at 75% is the policy threshold for program eligibility.
+- A visible jump suggests program participation may increase absenteeism.
+
+```{r}
+library(rdrobust)
+
+# Optimal bandwidth from rdbwselect (rounded for clarity)
+rdplot(merged$chronic_absenteeism, merged$frpm_rate,
+       c = 75, h = 4.443, p = 1,
+       x.lim = c(65, 85),
+       title = "RDD Plot at h = 4.443 (Optimal Bandwidth)",
+       x.label = "FRPM Eligibility (%)",
+       y.label = "Chronic Absenteeism (%)")
+
+# Sensitivity: Narrower
+rdplot(merged$chronic_absenteeism, merged$frpm_rate,
+       c = 75, h = 3, p = 1,
+       x.lim = c(65, 85),
+       title = "RDD Plot at h = 3 (Narrow Bandwidth)",
+       x.label = "FRPM Eligibility (%)",
+       y.label = "Chronic Absenteeism (%)")
+
+# Sensitivity: Wider
+rdplot(merged$chronic_absenteeism, merged$frpm_rate,
+       c = 75, h = 5, p = 1,
+       x.lim = c(65, 85),
+       title = "RDD Plot at h = 5 (Wide Bandwidth)",
+       x.label = "FRPM Eligibility (%)",
+       y.label = "Chronic Absenteeism (%)")
+
+# Sensitivity: Even wider
+rdplot(merged$chronic_absenteeism, merged$frpm_rate,
+       c = 75, h = 6, p = 1,
+       x.lim = c(65, 85),
+       title = "RDD Plot at h = 6 (Extra Wide Bandwidth)",
+       x.label = "FRPM Eligibility (%)",
+       y.label = "Chronic Absenteeism (%)")
+
+
+```
+
+
+# VII. Run the McCrary Density Test
+**What:** Check whether schools are manipulating FRPM % to qualify.
+
+**Why it's important:** RDD assumes schools cannot manipulate assignment. Bunching invalidates causal claims.
+
+**How it supports your thesis:** If there’s no manipulation, the assignment can be seen as as-good-as-random, strengthening causal identification.
+```{r}
+library(rdrobust)
+library(rddensity)
+
+merged <- merged %>%
+  mutate(
+    frpm_rate = ifelse(frpm_rate <= 1, frpm_rate * 100, frpm_rate),
+    running   = frpm_rate - 75,
+    treated   = ifelse(frpm_rate >= 75, 1, 0)
+  )
+
+ggplot(merged, aes(frpm_rate, chronic_absenteeism)) +
+  geom_point(alpha = .4) +
+  geom_vline(xintercept = 75, linetype = "dashed") +
+  labs(x = "FRPM eligibility rate (%)",
+       y = "Chronic absenteeism rate (%)")
+
+```
+
+```{r}
+library(rddensity)
+
+# 1. McCrary density test
+dens75 <- rddensity(merged$frpm_rate, c = 75)
+dens75$test            # prints t_jk and p_jk
+
+# 3. Density test statistics (use the right object)
+dens75$test             # NOT rd75$test
+
+# 4. McCrary density plot
+# McCrary density test object
+dens75 <- rddensity(merged$frpm_rate, c = 75)
+
+# Density plot  ── rdd object first, X second ──
+rdplotdensity(
+  dens75,                 # ← rdd    (object returned by rddensity)
+  merged$frpm_rate,       # ← X      (numeric running-variable vector)
+  title  = "McCrary density plot at 75% FRPM",
+  xlabel = "FRPM eligibility rate (%)",
+  ylabel = "Estimated density"
+)
+```
+
+# VIII. Covariate Balance Checks (In Progress)
+
+# IX. Robustness Checks
+### 1. Bandwidth Sensitivity
+Try different bandwidths (e.g., h = 2 to h = 6). Linear results are most credible. Avoid high-order polynomials due to overfitting.
+```{r}
+# Fit models
+bw_models <- list(
+  h2 = rdrobust(merged$chronic_absenteeism, merged$frpm_rate, c = 75, h = 2, p = 1),
+  h3 = rdrobust(merged$chronic_absenteeism, merged$frpm_rate, c = 75, h = 3, p = 1),
+  h4 = rdrobust(merged$chronic_absenteeism, merged$frpm_rate, c = 75, h = 4.443, p = 1),
+  h5 = rdrobust(merged$chronic_absenteeism, merged$frpm_rate, c = 75, h = 5, p = 1),
+  h6 = rdrobust(merged$chronic_absenteeism, merged$frpm_rate, c = 75, h = 6, p = 1)
+)
+
+# Create table
+bw_results <- do.call(rbind, Map(function(model, h) {
+  data.frame(
+    Bandwidth = h,
+    Coef = model$coef[1, 1],
+    SE = model$se[1, 1],
+    Pval = model$pv[1, 1],
+    CI_Lower = model$ci[1, 1],
+    CI_Upper = model$ci[1, 2]
+  )
+}, bw_models, c(2, 3, 4.443, 5, 6)))
+knitr::kable(bw_results, digits = 3, caption = "Bandwidth Sensitivity: Local Linear RDD Estimates")
+
+```
+
+### 2. Polynomial Order Sensitivity
+Include results but de-emphasize cubic and quadratic fits. Note they are unstable and reverse sign — a common RDD issue.
+```{r}
+# Models: m7, m8, m9 (h = 4, p = 1–3)
+poly_models <- list(m7, m8, m9)
+poly_info <- data.frame(Poly_Order = 1:3, Bandwidth = 4)
+
+poly_table <- do.call(rbind, Map(function(model, spec) {
+  data.frame(
+    Poly_Order = spec$Poly_Order,
+    Coef = model$coef[1,1],
+    SE = model$se[1,1],
+    Pval = model$pv[1,1],
+    CI_Lower = model$ci[1,1],
+    CI_Upper = model$ci[1,2]
+  )
+}, poly_models, split(poly_info, seq(nrow(poly_info)))))
+
+knitr::kable(poly_table, digits = 3, caption = "Polynomial Order Sensitivity at h = 4")
+
+```
+
+### 3. Placebo Cutoffs (Next Step Suggestion)
+Try cutoffs at 85% or 90% where no program change should occur. Null effects there will further validate your 75% results.
+```{r}
+
+# Placebo cutoffs at 85% and 90%
+p70 <- rdrobust(merged$chronic_absenteeism, merged$frpm_rate, c = 85, h = 4, p = 1, masspoints = "adjust")
+p80 <- rdrobust(merged$chronic_absenteeism, merged$frpm_rate, c = 90, h = 4, p = 1, masspoints = "adjust")
+
+placebo_results <- do.call(rbind, Map(function(model, cutoff) {
+  data.frame(
+    Placebo_Cutoff = cutoff,
+    Coef = model$coef[1,1],
+    SE = model$se[1,1],
+    Pval = model$pv[1,1],
+    CI_Lower = model$ci[1,1],
+    CI_Upper = model$ci[1,2]
+  )
+}, list(p70, p80), c(70, 80)))
+
+knitr::kable(placebo_results, digits = 3, caption = "Placebo Cutoffs (No Expected Treatment Effect)")
+```
