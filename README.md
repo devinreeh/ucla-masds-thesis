@@ -2,6 +2,9 @@
 
 I'm honored that you'd visit this repo. If you'd like any additional information, please let me know on [LinkedIn](https://www.linkedin.com/in/devin-reeh-77374bb2/) or email me at [devin.recuiters@gmail.com](devin.recuiters@gmail.com) (even if you aren't a recruiter).
 
+## Mentions
+While I have a dedication page, I want to give a huge shout out to Professor Chad Hazlett for his guidance as my thesis advisor. Huge thank you to Bishwadeep bhattacharyya, my colleague, for seeing it through to the end. Additionally, in no particular order, thank you Dr. Michael Tsiang, Laurie Leyden, Rick Schoenberg, and the entire masters teaching faculty at UCLA.  
+
 
 ## Getting Started:
 I'd suggest you read the paper abstract below first. Then, clone the repo. The final code file that generates the final results are in titled 'final'. The final.rmd is the r markdown file which you can clone and edit. The final.pdf is the knitted version of the markdown file. The final paper extracts the key findings from the code and research.
@@ -13,8 +16,6 @@ This thesis examines the causal effects of poverty based eligibility thresholds 
 ## For students from the UCLA MAS program
 I'd recommend you read the paper and clone the structure, and modify it as you see fit. I've stood on the shoulders of giants and greatly benefited from their generosity in sharing the templats and theses formats! Best of luck.
 
-## Mentions
-While I have a dedication page, I want to give a huge shout out to Professor Chad Hazlett for his guidance as my thesis advisor. Additionally, in no particular order, thank you Dr. Michael Tsiang, Laurie Leyden, Rick Schoenberg, and the entire masters teaching faculty at UCLA.  
 
 
 ## Parting Message and some unsolicited advice to myself, my family, and any other reader
